@@ -1,0 +1,15 @@
+COSC310 M3 Admin+Export Verification Summary
+============================================================
+
+Unit+Integration tests: PASS (4 passed, 85% coverage)
+Coverage >= 70%: PASS (85%)
+Create item: PASS
+Duplicate SKU 409: PASS
+Update item: PASS
+Export selection: PASS
+Delete item: PASS
+Forbidden 403 (no token): PASS
+Not found 404 (after delete): PASS
+
+ALL TESTS PASSED
+============================================================
