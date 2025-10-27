@@ -47,6 +47,14 @@ htmlcov/
 .tox/
 coverage.xml
 
-# Evidence (optional, you may want to keep generated files)
-evidence/
+# Evidence (keep M3 verification files)
+!evidence/coverage.xml
+!evidence/logs/
+!evidence/run/
+!evidence/summary_admin_export.txt
+evidence/*
+!evidence/coverage.xml
+!evidence/logs
+!evidence/run
+!evidence/summary_admin_export.txt
 
