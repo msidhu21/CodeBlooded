@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from ..models.dto import ExportSelectionRequest
 from ..repos.item_repo import ItemRepo
 from ..services.export_service import ExportService
-from ..core.deps import get_db, require_admin  # keep admin-only for demo
+from ..core.deps import get_db, require_admin
 
 router = APIRouter(prefix="/export", tags=["export"])
 
