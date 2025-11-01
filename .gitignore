@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*.db
+.evidence/
+evidence/**
+!evidence/coverage.xml
+.vscode/
+.idea/
+.coverage
+.pytest_cache/
+htmlcov/
+
+
