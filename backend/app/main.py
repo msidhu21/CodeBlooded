@@ -3,6 +3,11 @@ from .api import auth, items, profile, admin, export
 
 def create_app() -> FastAPI:
     app = FastAPI(title="COSC310 Backend", version="M3")
+    
+    @app.get("/")
+    def root():
+        return {"status": "ok", "docs": "/docs"}
+    
     app.include_router(auth.router)
     app.include_router(items.router)
     app.include_router(profile.router)
