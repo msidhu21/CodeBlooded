@@ -1,0 +1,11 @@
+# Dockerfile for Frontend (placeholder)
+# Replace this with your actual frontend build (e.g., React, Vue, etc.)
+FROM node:20-alpine
+
+WORKDIR /frontend
+
+COPY frontend/ /frontend/
+
+RUN npm install || true
+
+CMD ["npm", "start"]

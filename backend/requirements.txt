@@ -1,0 +1,12 @@
+# requirements.txt for backend Docker build
+fastapi
+uvicorn
+# Add sqlalchemy for ORM
+sqlalchemy
+# Add email-validator for Pydantic email fields
+email-validator
+# Add pydantic for data validation
+pydantic
+# Add passlib with bcrypt for password hashing
+passlib[bcrypt]
+# Add your backend dependencies here

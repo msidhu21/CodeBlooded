@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .api import auth, items, profile, admin, export
+from app.api import auth, items, profile, admin, export
 
 def create_app() -> FastAPI:
     app = FastAPI(title="COSC310 Backend", version="M3")
