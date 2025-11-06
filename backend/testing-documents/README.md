@@ -3,7 +3,8 @@ Testing Evidence – Milestone 3:
 This folder shows the testing results for **User Story 1: User Registration**.
 
 - All the tests for the **AuthService** worked properly using `pytest`.  
-- The screenshot `pytest_results.png` shows the test results.  
+- The screenshot `pytest_results.png` shows the test results.
+- ![Pytest Results Screenshot](pytest_results.png)
 
 What I Tested:
 - Registering a new user with a unique email  
