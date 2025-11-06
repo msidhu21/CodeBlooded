@@ -1,8 +1,5 @@
-from fastapi import APIRouter, Depends, Header
-from sqlalchemy.orm import Session
-from ..models.dto import ItemCreate, ItemUpdate, ItemOut
-from ..repos.item_repo import ItemRepo
-from ..core.db import get_db
+from fastapi import APIRouter, Header, HTTPException, Depends
+from ..repos.csv_repo import CSVRepository
 from ..core.errors import Forbidden
 from ..core.security import is_admin_token
 
@@ -13,18 +10,26 @@ def require_admin(authorization: str | None = Header(default=None)):
     if not is_admin_token(token):
         raise Forbidden("Admin role required")
 
-@router.post("/items", response_model=ItemOut, status_code=201)
-def create_item(payload: ItemCreate, _=Depends(require_admin), db: Session = Depends(get_db)):
-    obj = ItemRepo(db).create(**payload.model_dump())
-    return ItemOut.model_validate(obj)
+def get_csv_repo():
+    return CSVRepository()
 
-@router.patch("/items/{item_id}", response_model=ItemOut)
-def update_item(item_id: int, payload: ItemUpdate, _=Depends(require_admin), db: Session = Depends(get_db)):
-    obj = ItemRepo(db).update(item_id, **payload.model_dump())
-    return ItemOut.model_validate(obj)
+@router.post("/items", status_code=201)
+def create_item(payload: dict, _=Depends(require_admin)):
+    repo = get_csv_repo()
+    return repo.add_product(payload)
 
-@router.delete("/items/{item_id}", status_code=204)
-def delete_item(item_id: int, _=Depends(require_admin), db: Session = Depends(get_db)):
-    ItemRepo(db).delete(item_id)
+@router.patch("/items/{product_id}")
+def update_item(product_id: str, payload: dict, _=Depends(require_admin)):
+    repo = get_csv_repo()
+    result = repo.update_product(product_id, payload)
+    if not result:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return result
+
+@router.delete("/items/{product_id}", status_code=204)
+def delete_item(product_id: str, _=Depends(require_admin)):
+    repo = get_csv_repo()
+    if not repo.delete_product(product_id):
+        raise HTTPException(status_code=404, detail="Product not found")
     return None
 

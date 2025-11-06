@@ -1,18 +1,47 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from ..models.dto import SearchQuery, ItemOut
-from ..services.catalog_service import CatalogService
-from ..core.db import get_db
+from fastapi import APIRouter, HTTPException
+from ..repos.csv_repo import CSVRepository
 
 router = APIRouter(prefix="/items", tags=["items"])
 
-@router.get("", response_model=list[ItemOut])
-def search(q: str | None = None, category: str | None = None, available: bool | None = None,
-           page: int = 1, size: int = 10, db: Session = Depends(get_db)):
-    svc = CatalogService(db)
-    return svc.search(SearchQuery(q=q, category=category, available=available, page=page, size=size))
+def get_csv_repo():
+    return CSVRepository()
 
-@router.get("/{item_id}", response_model=ItemOut)
-def details(item_id: int, db: Session = Depends(get_db)):
-    return CatalogService(db).details(item_id)
+@router.get("/search")
+def search_products(
+    q: str = None,
+    category: str = None,
+    min_rating: float = None,
+    max_price: float = None,
+    page: int = 1,
+    size: int = 10
+):
+    repo = get_csv_repo()
+    offset = (page - 1) * size
+    products = repo.search_products(
+        query=q,
+        category=category,
+        min_rating=min_rating,
+        max_price=max_price,
+        limit=size,
+        offset=offset
+    )
+    return {"products": products, "page": page, "size": size, "total": len(products)}
+
+@router.get("/{product_id}")
+def get_product_details(product_id: str):
+    repo = get_csv_repo()
+    product = repo.get_product_by_id(product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    related = repo.get_related_products(product_id)
+    return {
+        "product": product,
+        "related": related
+    }
+
+@router.get("/categories/list")
+def get_categories():
+    repo = get_csv_repo()
+    return {"categories": repo.get_categories()}
 
