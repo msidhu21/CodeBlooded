@@ -8,5 +8,6 @@ pytest-cov
 httpx
 python-multipart
 passlib[bcrypt]
+pandas
 
 

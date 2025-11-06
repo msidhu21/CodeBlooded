@@ -1,12 +1,16 @@
-from ..models.dto import ExportSelectionRequest, ExportPayload, ItemOut
-from ..repos.item_repo import ItemRepo
+from ..models.dto import ExportSelectionRequest, ExportPayload
+from ..repos.csv_repo import CSVRepository
 
 class ExportService:
-    def __init__(self, db):
-        self.repo = ItemRepo(db)
+    def __init__(self):
+        self.repo = CSVRepository()
 
     def export_selection(self, req: ExportSelectionRequest) -> ExportPayload:
-        items = self.repo.get_many(req.ids)
-        out = [ItemOut.model_validate(i) for i in items]
-        return ExportPayload(count=len(out), items=out)
+        # Get products by IDs
+        items = []
+        for product_id in req.ids:
+            product = self.repo.get_product_by_id(product_id)
+            if product:
+                items.append(product)
+        return ExportPayload(count=len(items), items=items)
 
