@@ -26,8 +26,9 @@ class StubRepo:
 
 @pytest.fixture
 def svc():
-    s = ProfileService()
-    s.repo = StubRepo()  # inject stub
+    # Bypass __init__ so we don't create a real UserRepo or hit CSV
+    s = ProfileService.__new__(ProfileService)
+    s.repo = StubRepo()
     return s
 
 def test_update_partial_fields_calls_repo_with_only_those_fields(svc):

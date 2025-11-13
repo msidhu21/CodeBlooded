@@ -12,7 +12,6 @@ class UserRepo:
         env_path = os.environ.get("USERS_CSV")
         if env_path:
             csv_path = Path(env_path)
-            
         if csv_path is None:
             base_path = Path(__file__).parent.parent.parent
             csv_path = base_path / "data" / "users.csv"

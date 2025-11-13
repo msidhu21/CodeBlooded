@@ -1,14 +1,15 @@
+# app/main.py
 from fastapi import FastAPI
 from app.api import auth, items, profile, admin, export
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="COSC310 Backend", version="M3")
+    app = FastAPI(title="COSC310 backend", version="M3")
     app.include_router(auth.router)
     app.include_router(items.router)
     app.include_router(profile.router)
     app.include_router(admin.router)
     app.include_router(export.router)
     return app
-#this is a test
-app = create_app()
 
+# global for dev server
+app = create_app()

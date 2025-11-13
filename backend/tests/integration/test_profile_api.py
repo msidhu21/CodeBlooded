@@ -1,39 +1,45 @@
 from pathlib import Path
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
-import pytest
-from app.main import app
+import shutil, os
 
-def test_patch_profile_happy_path(tmp_path, monkeypatch):
-    # TEMP CSV (no OneDrive)
-    data_dir = tmp_path / "data"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    csv_path = data_dir / "users.csv"
-    csv_path.write_text(
-        "user_id,email,password_hash,name,role\n"
-        "1,admin@cosc310.ca,hash,Admin User,admin\n",
-        encoding="utf-8"
-    )
+REAL_CSV = Path(__file__).parents[2] / "data" / "users.csv"  # backend/data/users.csv
+SAFE_CSV = Path("C:/Temp/users_test.csv")  # outside OneDrive
 
-    # point repo at the temp CSV
-    monkeypatch.setenv("USERS_CSV", str(csv_path))
+def test_patch_profile_against_real_copy(monkeypatch):
+    SAFE_CSV.parent.mkdir(parents=True, exist_ok=True)
+    # copy real -> safe location
+    shutil.copyfile(REAL_CSV, SAFE_CSV)
 
-    # use context manager so the app shuts down cleanly
-    with TestClient(app) as client:
-        payload = {
-            "name": "Admin Updated",
-            "picture": "avatar.png",
-            "contact": {"email": "admin@cosc310.ca", "phone": "555-1234"},
-        }
-        r = client.patch("/profile", json=payload)
-        assert r.status_code == 200, r.text
-        body = r.json()
-        assert body["id"] == 1
-        assert body["name"] == "Admin Updated"
+    # point repo at safe copy (NOT the OneDrive file)
+    monkeypatch.setenv("USERS_CSV", str(SAFE_CSV))
 
-    # verify file really changed
-    txt = csv_path.read_text(encoding="utf-8")
-    assert "avatar.png" in txt
-    assert "555-1234" in txt
+    from app.api import profile
+    app = FastAPI(title="profile-only")
+    app.include_router(profile.router)
 
-    # clean env
-    monkeypatch.delenv("USERS_CSV", raising=False)
+    try:
+        with TestClient(app, raise_server_exceptions=True) as client:
+            payload = {
+                "name": "Admin Updated",
+                "picture": "avatar_profile_test.png",
+                "contact": {"email": "admin@cosc310.ca", "phone": "555-1234"},
+            }
+            r = client.patch("/profile", json=payload, timeout=6.0)
+            assert r.status_code == 200, r.text
+            body = r.json()
+            assert body["id"] == 1
+            assert body["name"] == "Admin Updated"
+
+        # verify the safe copy changed
+        txt = SAFE_CSV.read_text(encoding="utf-8")
+        assert "avatar_profile_test.png" in txt
+        assert "555-1234" in txt
+
+    finally:
+        # optional cleanup
+        monkeypatch.delenv("USERS_CSV", raising=False)
+        try:
+            os.remove(SAFE_CSV)
+        except FileNotFoundError:
+            pass

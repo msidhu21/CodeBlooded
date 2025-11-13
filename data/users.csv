@@ -1,2 +1,0 @@
-user_id,email,password_hash,name,role
-1,admin@cosc310.ca,hash,Admin User,admin
