@@ -1,34 +1,40 @@
-name: CI
+name: Backend CI
+
 on:
   pull_request:
+    branches: [ Development, main, user-story-4 ]
   push:
-    branches: [ main, Development, "feature/**", "user-story-**" ]
+    branches: [ user-story-4 ]
 
 jobs:
-  test:
+  backend-tests:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install "pydantic[email]" passlib[bcrypt] pyjwt uvicorn fastapi pandas pytest pytest-cov
 
-      - name: Run tests
+      - name: Run profile tests with coverage
+        working-directory: ./backend
         run: |
-          pytest -q --maxfail=1 --disable-warnings --cov=app --cov-report=xml:../evidence/coverage.xml
+          python -m pytest -q \
+            tests/unit/test_profile_service.py \
+            tests/integration/test_profile_api.py \
+            --maxfail=1 --disable-warnings \
+            --cov=app --cov-report=xml:../evidence/coverage.xml
 
-      - name: Upload coverage.xml
+      - name: Upload coverage.xml artifact
         uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: backend-coverage
           path: evidence/coverage.xml
