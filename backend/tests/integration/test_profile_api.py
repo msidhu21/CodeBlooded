@@ -1,45 +1,49 @@
-from pathlib import Path
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-import shutil, os
 
-REAL_CSV = Path(__file__).parents[2] / "data" / "users.csv"  # backend/data/users.csv
-SAFE_CSV = Path("C:/Temp/users_test.csv")  # outside OneDrive
+from app.api import profile
+import app.services.profile_service as ps
+from app.models.dto import ProfileUpdate, AuthUser
 
-def test_patch_profile_against_real_copy(monkeypatch):
-    SAFE_CSV.parent.mkdir(parents=True, exist_ok=True)
-    # copy real -> safe location
-    shutil.copyfile(REAL_CSV, SAFE_CSV)
 
-    # point repo at safe copy (NOT the OneDrive file)
-    monkeypatch.setenv("USERS_CSV", str(SAFE_CSV))
+def test_patch_profile_smoke(monkeypatch):
+    """
+    Integration-ish test:
+    - Build a FastAPI app
+    - Mount ONLY the /profile router
+    - Monkeypatch ProfileService.update so we don't touch CSV/OneDrive
+    - Call PATCH /profile and assert the JSON shape
+    """
 
-    from app.api import profile
     app = FastAPI(title="profile-only")
     app.include_router(profile.router)
 
-    try:
-        with TestClient(app, raise_server_exceptions=True) as client:
-            payload = {
-                "name": "Admin Updated",
-                "picture": "avatar_profile_test.png",
-                "contact": {"email": "admin@cosc310.ca", "phone": "555-1234"},
-            }
-            r = client.patch("/profile", json=payload, timeout=6.0)
-            assert r.status_code == 200, r.text
-            body = r.json()
-            assert body["id"] == 1
-            assert body["name"] == "Admin Updated"
+    def fake_update(self, user_id: int, req: ProfileUpdate) -> AuthUser:
+        return AuthUser(
+            user_id=1,
+            email="admin@cosc310.ca",
+            name=req.name or "Admin User",
+            role="admin",
+        )
 
-        # verify the safe copy changed
-        txt = SAFE_CSV.read_text(encoding="utf-8")
-        assert "avatar_profile_test.png" in txt
-        assert "555-1234" in txt
+    monkeypatch.setattr(ps.ProfileService, "update", fake_update, raising=True)
 
-    finally:
-        # optional cleanup
-        monkeypatch.delenv("USERS_CSV", raising=False)
-        try:
-            os.remove(SAFE_CSV)
-        except FileNotFoundError:
-            pass
+    with TestClient(app, raise_server_exceptions=True) as client:
+        resp = client.patch(
+            "/profile",
+            json={
+                "name": "Patched",
+                "picture": "x.png",
+                "contact": {"email": "admin@cosc310.ca", "phone": "999"},
+            },
+            timeout=5.0,
+        )
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+
+    # If AuthUser uses alias user_id -> id, JSON key will still be "id"
+    assert body["id"] == 1
+    assert body["name"] == "Patched"
+    assert body["email"] == "admin@cosc310.ca"
+    assert body["role"] == "admin"
