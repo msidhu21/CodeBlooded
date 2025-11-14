@@ -27,14 +27,8 @@ jobs:
 
       - name: Run profile tests with coverage
         working-directory: backend
-        env:
-          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
         run: |
-          python -m pytest -vv -s \
-            tests/unit/test_profile_service.py \
-            tests/integration/test_profile_api.py \
-            --maxfail=1 --disable-warnings \
-            --cov=app --cov-report=xml:../evidence/coverage.xml
+          python -m pytest -vv -s tests/unit/test_profile_service.py tests/integration/test_profile_api.py --maxfail=1 --disable-warnings --cov=app --cov-report=xml:../evidence/coverage.xml
 
       - name: Upload coverage.xml artifact
         uses: actions/upload-artifact@v4
