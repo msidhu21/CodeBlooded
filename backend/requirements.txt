@@ -9,5 +9,6 @@ httpx
 python-multipart
 passlib[bcrypt]
 pandas
+pyjwt
 
 

@@ -6,6 +6,6 @@ router = APIRouter(prefix="/profile", tags=["profile"])
 
 @router.patch("", response_model=AuthUser)
 def update_profile(req: ProfileUpdate, authorization: str | None = Header(default=None)):
-    user_id = 1  # In a real app, extract from JWT token
+    # Hardcoded user_id=1 until JWT extraction is implemented
+    user_id = 1
     return ProfileService().update(user_id, req)
-
