@@ -7,6 +7,8 @@ from ..core.db import get_db
 from ..core.errors import Forbidden
 from ..core.security import is_admin_token
 
+EXPORT_FILENAME = "selection.json"
+
 router = APIRouter(prefix="/export", tags=["export"])
 
 def require_admin(authorization: str | None = Header(default=None)):
@@ -19,6 +21,6 @@ def export_selection(req: ExportSelectionRequest, _=Depends(require_admin), db: 
     payload = ExportService(db).export_selection(req)
     return JSONResponse(
         content=payload.model_dump(),
-        headers={"Content-Disposition": "attachment; filename=selection.json"}
+        headers={"Content-Disposition": f"attachment; filename={EXPORT_FILENAME}"}
     )
 
