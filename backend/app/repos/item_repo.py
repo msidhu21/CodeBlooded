@@ -56,3 +56,6 @@ class ItemRepo:
         stmt = select(Item).where(Item.id.in_(list(ids)))
         return list(self.db.execute(stmt).scalars())
 
+    def by_ids(self, ids: Iterable[int]) -> List[Item]:
+        return self.get_many(ids)
+
