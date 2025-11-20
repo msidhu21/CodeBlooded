@@ -63,7 +63,8 @@ def search_products(
     # Clean NaN values for JSON serialization
     products = clean_nan_values(products)
     
-    return {
+    # Prepare response
+    response = {
         "products": products,
         "pagination": {
             "page": page,
@@ -86,6 +87,13 @@ def search_products(
             "results_on_page": len(products)
         }
     }
+    
+    # Add suggestions if no results found and query was provided
+    if total_results == 0 and q:
+        suggestions = repo.suggest_alternatives(q)
+        response["suggestions"] = clean_nan_values(suggestions)
+    
+    return response
 
 @router.get("/{product_id}")
 def get_product_details(product_id: str):
