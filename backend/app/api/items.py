@@ -28,7 +28,8 @@ def search_products(
     max_price: float = None,
     min_discount: float = None,
     page: int = 1,
-    size: int = 10
+    size: int = 10,
+    compact: bool = False
 ):
     repo = get_csv_repo()
     offset = (page - 1) * size
@@ -49,6 +50,9 @@ def search_products(
         offset=offset,
         return_total=True
     )
+    
+    # Format products for display with highlighting
+    products = repo.format_for_display(products, query=q, compact=compact)
     
     search_time = round((time.time() - start_time) * 1000, 2)  # Convert to milliseconds
     
