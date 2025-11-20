@@ -23,7 +23,10 @@ def search_products(
     q: str = None,
     category: str = None,
     min_rating: float = None,
+    max_rating: float = None,
+    min_price: float = None,
     max_price: float = None,
+    min_discount: float = None,
     page: int = 1,
     size: int = 10
 ):
@@ -38,7 +41,10 @@ def search_products(
         query=q,
         category=category,
         min_rating=min_rating,
+        max_rating=max_rating,
+        min_price=min_price,
         max_price=max_price,
+        min_discount=min_discount,
         limit=size,
         offset=offset,
         return_total=True
@@ -66,7 +72,10 @@ def search_products(
             "search_query": q,
             "category": category,
             "min_rating": min_rating,
-            "max_price": max_price
+            "max_rating": max_rating,
+            "min_price": min_price,
+            "max_price": max_price,
+            "min_discount": min_discount
         },
         "meta": {
             "search_time_ms": search_time,

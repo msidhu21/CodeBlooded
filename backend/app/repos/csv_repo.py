@@ -45,11 +45,14 @@ class CSVRepository:
                        query: str = None, 
                        category: str = None, 
                        min_rating: float = None,
+                       max_rating: float = None,
+                       min_price: float = None,
                        max_price: float = None,
+                       min_discount: float = None,
                        limit: int = 100,
                        offset: int = 0,
                        return_total: bool = False) -> List[dict] | tuple[List[dict], int]:
-        """Search products with filters - searches across name, description, and category
+        """Search products with multiple filters - searches across name, description, and category
         
         Args:
             return_total: If True, returns (results, total_count) tuple
@@ -97,11 +100,29 @@ class CSVRepository:
             filtered_df = filtered_df[filtered_df['rating_float'] >= min_rating]
             filtered_df = filtered_df.drop(columns=['rating_float'])
         
-        # Filter by maximum price
-        if max_price is not None:
+        # Filter by maximum rating
+        if max_rating is not None:
+            filtered_df = filtered_df[filtered_df['rating'] <= max_rating]
+        
+        # Filter by price range
+        if min_price is not None or max_price is not None:
             # Clean price string and convert to float
             filtered_df['price_clean'] = filtered_df['discounted_price'].str.replace('₹', '').str.replace(',', '').astype(float)
-            filtered_df = filtered_df[filtered_df['price_clean'] <= max_price]
+            
+            if min_price is not None:
+                filtered_df = filtered_df[filtered_df['price_clean'] >= min_price]
+            
+            if max_price is not None:
+                filtered_df = filtered_df[filtered_df['price_clean'] <= max_price]
+            
+            filtered_df = filtered_df.drop(columns=['price_clean'])
+        
+        # Filter by minimum discount percentage
+        if min_discount is not None:
+            # Clean discount string and convert to float
+            filtered_df['discount_clean'] = filtered_df['discount_percentage'].str.replace('%', '').astype(float)
+            filtered_df = filtered_df[filtered_df['discount_clean'] >= min_discount]
+            filtered_df = filtered_df.drop(columns=['discount_clean'])
         
         # Get total count before pagination
         total_count = len(filtered_df)
@@ -110,7 +131,7 @@ class CSVRepository:
         paginated_df = filtered_df.iloc[offset:offset+limit]
         
         # Remove temporary columns before returning
-        columns_to_drop = ['relevance_score', 'price_clean']
+        columns_to_drop = ['relevance_score', 'price_clean', 'discount_clean']
         paginated_df = paginated_df.drop(columns=[col for col in columns_to_drop if col in paginated_df.columns], errors='ignore')
         
         results = paginated_df.to_dict('records')
