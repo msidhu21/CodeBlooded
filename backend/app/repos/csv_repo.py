@@ -47,17 +47,36 @@ class CSVRepository:
                        min_rating: float = None,
                        max_price: float = None,
                        limit: int = 100,
-                       offset: int = 0) -> List[dict]:
-        """Search products with filters"""
+                       offset: int = 0,
+                       return_total: bool = False) -> List[dict] | tuple[List[dict], int]:
+        """Search products with filters - searches across name, description, and category
+        
+        Args:
+            return_total: If True, returns (results, total_count) tuple
+        """
         filtered_df = self.df.copy()
         
-        # Text search in product name
+        # Enhanced text search across multiple fields
         if query:
-            filtered_df = filtered_df[
-                filtered_df['product_name'].str.contains(query, case=False, na=False)
-            ]
+            # Search in product name, description (about_product), and category
+            name_match = filtered_df['product_name'].str.contains(query, case=False, na=False)
+            desc_match = filtered_df['about_product'].str.contains(query, case=False, na=False)
+            cat_match = filtered_df['category'].str.contains(query, case=False, na=False)
+            
+            # Combine matches with OR logic - product matches if found in any field
+            filtered_df = filtered_df[name_match | desc_match | cat_match]
+            
+            # Add relevance score for ranking (higher score = better match)
+            filtered_df['relevance_score'] = (
+                name_match.astype(int) * 3 +  # Name matches are most important
+                desc_match.astype(int) * 1 +  # Description matches are less important
+                cat_match.astype(int) * 2      # Category matches are moderately important
+            )
+            
+            # Sort by relevance score (highest first)
+            filtered_df = filtered_df.sort_values('relevance_score', ascending=False)
         
-        # Filter by category
+        # Filter by category (exact or partial match)
         if category:
             filtered_df = filtered_df[
                 filtered_df['category'].str.contains(category, case=False, na=False)
@@ -73,7 +92,21 @@ class CSVRepository:
             filtered_df['price_clean'] = filtered_df['discounted_price'].str.replace('₹', '').str.replace(',', '').astype(float)
             filtered_df = filtered_df[filtered_df['price_clean'] <= max_price]
         
-        return filtered_df.iloc[offset:offset+limit].to_dict('records')
+        # Get total count before pagination
+        total_count = len(filtered_df)
+        
+        # Apply pagination
+        paginated_df = filtered_df.iloc[offset:offset+limit]
+        
+        # Remove temporary columns before returning
+        columns_to_drop = ['relevance_score', 'price_clean']
+        paginated_df = paginated_df.drop(columns=[col for col in columns_to_drop if col in paginated_df.columns], errors='ignore')
+        
+        results = paginated_df.to_dict('records')
+        
+        if return_total:
+            return results, total_count
+        return results
     
     def get_related_products(self, product_id: str, limit: int = 4) -> List[dict]:
         """Get related products based on category"""
