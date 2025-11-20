@@ -189,6 +189,116 @@ class CSVRepository:
         
         return formatted_products
     
+    def get_popular_products(self, limit: int = 10) -> List[dict]:
+        """Get popular products based on rating count
+        
+        Args:
+            limit: Maximum number of products to return
+            
+        Returns:
+            List of popular products sorted by rating count
+        """
+        # Convert rating_count to numeric, handling errors
+        df_copy = self.df.copy()
+        df_copy['rating_count_numeric'] = pd.to_numeric(
+            df_copy['rating_count'].astype(str).str.replace(',', ''),
+            errors='coerce'
+        )
+        
+        # Sort by rating count and get top products
+        popular = df_copy.nlargest(limit, 'rating_count_numeric')
+        return popular.to_dict('records')
+    
+    def get_similar_categories(self, query: str, limit: int = 5) -> List[str]:
+        """Get categories that partially match the query
+        
+        Args:
+            query: Search term to match against categories
+            limit: Maximum number of categories to return
+            
+        Returns:
+            List of matching category names
+        """
+        if not query:
+            return []
+        
+        categories = self.df['category'].unique()
+        matching = []
+        
+        for category in categories:
+            if category and query.lower() in str(category).lower():
+                matching.append(category)
+        
+        return matching[:limit]
+    
+    def suggest_alternatives(self, query: str) -> dict:
+        """Provide alternative suggestions when no results found
+        
+        Args:
+            query: The original search query
+            
+        Returns:
+            Dictionary with suggestions including similar categories and popular products
+        """
+        suggestions = {
+            'original_query': query,
+            'similar_categories': [],
+            'popular_products': [],
+            'did_you_mean': []
+        }
+        
+        # Get similar categories
+        suggestions['similar_categories'] = self.get_similar_categories(query, limit=5)
+        
+        # Get popular products as fallback
+        popular = self.get_popular_products(limit=5)
+        suggestions['popular_products'] = self.format_for_display(popular, compact=True)
+        
+        # Simple did-you-mean based on common terms in product names
+        if query:
+            common_terms = self._get_common_search_terms()
+            query_lower = query.lower()
+            
+            for term in common_terms:
+                if term != query_lower and (
+                    query_lower in term or 
+                    term in query_lower or
+                    self._similar_strings(query_lower, term)
+                ):
+                    suggestions['did_you_mean'].append(term)
+                    if len(suggestions['did_you_mean']) >= 3:
+                        break
+        
+        return suggestions
+    
+    def _get_common_search_terms(self) -> List[str]:
+        """Extract common terms from product names for suggestions"""
+        # Get all product names
+        names = self.df['product_name'].dropna().astype(str)
+        
+        # Extract common words (longer than 3 characters)
+        terms = set()
+        for name in names:
+            words = name.lower().split()
+            for word in words:
+                # Remove common words and keep meaningful terms
+                if len(word) > 3 and word not in ['with', 'from', 'this', 'that', 'pack']:
+                    terms.add(word)
+        
+        return sorted(list(terms))[:100]  # Return top 100 common terms
+    
+    def _similar_strings(self, s1: str, s2: str) -> bool:
+        """Simple string similarity check"""
+        # Check if strings are similar (simple Levenshtein-like check)
+        if abs(len(s1) - len(s2)) > 2:
+            return False
+        
+        # Count matching characters
+        matches = sum(c1 == c2 for c1, c2 in zip(s1, s2))
+        similarity = matches / max(len(s1), len(s2))
+        
+        return similarity > 0.7
+    
     def get_related_products(self, product_id: str, limit: int = 4) -> List[dict]:
         """Get related products based on category"""
         product = self.get_product_by_id(product_id)
