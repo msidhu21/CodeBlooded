@@ -140,6 +140,55 @@ class CSVRepository:
             return results, total_count
         return results
     
+    def format_for_display(self, products: List[dict], query: str = None, compact: bool = False) -> List[dict]:
+        """Format products for display with highlighted search terms
+        
+        Args:
+            products: List of product dictionaries
+            query: Search query to highlight
+            compact: If True, return only essential fields
+        
+        Returns:
+            List of formatted product dictionaries
+        """
+        formatted_products = []
+        
+        for product in products:
+            formatted = {
+                'product_id': product.get('product_id'),
+                'product_name': product.get('product_name'),
+                'category': product.get('category'),
+                'discounted_price': product.get('discounted_price'),
+                'actual_price': product.get('actual_price'),
+                'discount_percentage': product.get('discount_percentage'),
+                'rating': product.get('rating'),
+                'rating_count': product.get('rating_count'),
+                'img_link': product.get('img_link'),
+                'product_link': product.get('product_link')
+            }
+            
+            # Add highlighted fields if query provided
+            if query:
+                formatted['highlighted_fields'] = []
+                
+                # Check which fields match the query
+                if product.get('product_name') and query.lower() in str(product.get('product_name', '')).lower():
+                    formatted['highlighted_fields'].append('product_name')
+                
+                if product.get('category') and query.lower() in str(product.get('category', '')).lower():
+                    formatted['highlighted_fields'].append('category')
+                
+                if product.get('about_product') and query.lower() in str(product.get('about_product', '')).lower():
+                    formatted['highlighted_fields'].append('about_product')
+            
+            # Add full description if not compact
+            if not compact:
+                formatted['about_product'] = product.get('about_product')
+            
+            formatted_products.append(formatted)
+        
+        return formatted_products
+    
     def get_related_products(self, product_id: str, limit: int = 4) -> List[dict]:
         """Get related products based on category"""
         product = self.get_product_by_id(product_id)
