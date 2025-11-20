@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from ..repos.csv_repo import CSVRepository
+import time
 
 router = APIRouter(prefix="/items", tags=["items"])
 
@@ -17,15 +18,47 @@ def search_products(
 ):
     repo = get_csv_repo()
     offset = (page - 1) * size
-    products = repo.search_products(
+    
+    # Track search time for performance monitoring
+    start_time = time.time()
+    
+    # Get results with total count
+    products, total_results = repo.search_products(
         query=q,
         category=category,
         min_rating=min_rating,
         max_price=max_price,
         limit=size,
-        offset=offset
+        offset=offset,
+        return_total=True
     )
-    return {"products": products, "page": page, "size": size, "total": len(products)}
+    
+    search_time = round((time.time() - start_time) * 1000, 2)  # Convert to milliseconds
+    
+    # Calculate pagination metadata
+    total_pages = (total_results + size - 1) // size  # Ceiling division
+    has_more = page < total_pages
+    
+    return {
+        "products": products,
+        "pagination": {
+            "page": page,
+            "size": size,
+            "total_results": total_results,
+            "total_pages": total_pages,
+            "has_more": has_more
+        },
+        "filters_applied": {
+            "search_query": q,
+            "category": category,
+            "min_rating": min_rating,
+            "max_price": max_price
+        },
+        "meta": {
+            "search_time_ms": search_time,
+            "results_on_page": len(products)
+        }
+    }
 
 @router.get("/{product_id}")
 def get_product_details(product_id: str):
