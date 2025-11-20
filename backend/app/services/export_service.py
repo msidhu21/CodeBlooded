@@ -1,14 +1,14 @@
-from ..repos.item_repo import ItemRepo
+from ..repos.csv_repo import CSVRepository
 from ..models.dto import ExportSelectionRequest, ExportPayload, ItemOut
 
 
 class ExportService:
     def __init__(self, db=None):
         """
-        db is kept for backwards compatibility with older tests
-        that call ExportService(db=...). We don't actually use it.
+        db parameter kept for backwards compatibility with tests.
+        Uses CSVRepository for actual data access.
         """
-        self.repo = ItemRepo()
+        self.repo = CSVRepository()
 
     def export_selection(self, req: ExportSelectionRequest) -> ExportPayload:
         """
@@ -17,8 +17,9 @@ class ExportService:
         if not req.ids:
             return ExportPayload(count=0, items=[])
 
-        # Ask the repo for those items
-        rows = self.repo.by_ids(req.ids)
+        # Ask the repo for those items - convert int ids to string for CSV
+        str_ids = [str(id) for id in req.ids]
+        rows = self.repo.get_products_by_ids(str_ids)
 
         # Convert raw dicts/rows into ItemOut models
         items = [ItemOut.model_validate(r) for r in rows]
