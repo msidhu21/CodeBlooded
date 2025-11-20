@@ -45,10 +45,14 @@ class CSVRepository:
                        query: str = None, 
                        category: str = None, 
                        min_rating: float = None,
+                       max_rating: float = None,
+                       min_price: float = None,
                        max_price: float = None,
+                       min_discount: float = None,
                        limit: int = 100,
-                       offset: int = 0) -> List[dict]:
-        """Search products with filters"""
+                       offset: int = 0,
+                       return_total: bool = False):
+        """Search products with multiple filters"""
         filtered_df = self.df.copy()
         
         # Text search in product name
@@ -67,13 +71,40 @@ class CSVRepository:
         if min_rating is not None:
             filtered_df = filtered_df[filtered_df['rating'] >= min_rating]
         
-        # Filter by maximum price
-        if max_price is not None:
+        # Filter by maximum rating
+        if max_rating is not None:
+            filtered_df = filtered_df[filtered_df['rating'] <= max_rating]
+        
+        # Filter by price range
+        if min_price is not None or max_price is not None:
             # Clean price string and convert to float
             filtered_df['price_clean'] = filtered_df['discounted_price'].str.replace('₹', '').str.replace(',', '').astype(float)
-            filtered_df = filtered_df[filtered_df['price_clean'] <= max_price]
+            
+            if min_price is not None:
+                filtered_df = filtered_df[filtered_df['price_clean'] >= min_price]
+            
+            if max_price is not None:
+                filtered_df = filtered_df[filtered_df['price_clean'] <= max_price]
+            
+            filtered_df = filtered_df.drop(columns=['price_clean'])
         
-        return filtered_df.iloc[offset:offset+limit].to_dict('records')
+        # Filter by minimum discount percentage
+        if min_discount is not None:
+            # Clean discount string and convert to float
+            filtered_df['discount_clean'] = filtered_df['discount_percentage'].str.replace('%', '').astype(float)
+            filtered_df = filtered_df[filtered_df['discount_clean'] >= min_discount]
+            filtered_df = filtered_df.drop(columns=['discount_clean'])
+        
+        # Get total count before pagination
+        total_count = len(filtered_df)
+        
+        # Apply pagination
+        paginated_df = filtered_df.iloc[offset:offset+limit]
+        results = paginated_df.to_dict('records')
+        
+        if return_total:
+            return results, total_count
+        return results
     
     def get_related_products(self, product_id: str, limit: int = 4) -> List[dict]:
         """Get related products based on category"""

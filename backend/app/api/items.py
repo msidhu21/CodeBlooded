@@ -11,21 +11,53 @@ def search_products(
     q: str = None,
     category: str = None,
     min_rating: float = None,
+    max_rating: float = None,
+    min_price: float = None,
     max_price: float = None,
+    min_discount: float = None,
     page: int = 1,
     size: int = 10
 ):
     repo = get_csv_repo()
     offset = (page - 1) * size
-    products = repo.search_products(
+    
+    # Get results with total count
+    products, total_results = repo.search_products(
         query=q,
         category=category,
         min_rating=min_rating,
+        max_rating=max_rating,
+        min_price=min_price,
         max_price=max_price,
+        min_discount=min_discount,
         limit=size,
-        offset=offset
+        offset=offset,
+        return_total=True
     )
-    return {"products": products, "page": page, "size": size, "total": len(products)}
+    
+    # Calculate pagination metadata
+    total_pages = (total_results + size - 1) // size
+    has_more = page < total_pages
+    
+    return {
+        "products": products,
+        "pagination": {
+            "page": page,
+            "size": size,
+            "total_results": total_results,
+            "total_pages": total_pages,
+            "has_more": has_more
+        },
+        "filters_applied": {
+            "search_query": q,
+            "category": category,
+            "min_rating": min_rating,
+            "max_rating": max_rating,
+            "min_price": min_price,
+            "max_price": max_price,
+            "min_discount": min_discount
+        }
+    }
 
 @router.get("/{product_id}")
 def get_product_details(product_id: str):
