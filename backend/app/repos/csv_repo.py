@@ -34,6 +34,13 @@ class CSVRepository:
             return None
         return result.iloc[0].to_dict()
     
+    def get_products_by_ids(self, product_ids: List[str]) -> List[dict]:
+        """Get multiple products by their IDs"""
+        if not product_ids:
+            return []
+        result = self.df[self.df['product_id'].isin(product_ids)]
+        return result.to_dict('records')
+    
     def search_products(self, 
                        query: str = None, 
                        category: str = None, 
