@@ -59,22 +59,30 @@ class CSVRepository:
         # Enhanced text search across multiple fields
         if query:
             # Search in product name, description (about_product), and category
-            name_match = filtered_df['product_name'].str.contains(query, case=False, na=False)
-            desc_match = filtered_df['about_product'].str.contains(query, case=False, na=False)
-            cat_match = filtered_df['category'].str.contains(query, case=False, na=False)
+            # Handle NaN values by filling with empty string
+            name_match = filtered_df['product_name'].fillna('').str.contains(query, case=False, na=False)
+            desc_match = filtered_df['about_product'].fillna('').str.contains(query, case=False, na=False)
+            cat_match = filtered_df['category'].fillna('').str.contains(query, case=False, na=False)
             
             # Combine matches with OR logic - product matches if found in any field
-            filtered_df = filtered_df[name_match | desc_match | cat_match]
+            text_match = name_match | desc_match | cat_match
+            filtered_df = filtered_df[text_match]
             
             # Add relevance score for ranking (higher score = better match)
-            filtered_df['relevance_score'] = (
-                name_match.astype(int) * 3 +  # Name matches are most important
-                desc_match.astype(int) * 1 +  # Description matches are less important
-                cat_match.astype(int) * 2      # Category matches are moderately important
-            )
-            
-            # Sort by relevance score (highest first)
-            filtered_df = filtered_df.sort_values('relevance_score', ascending=False)
+            if len(filtered_df) > 0:
+                # Recalculate matches for the filtered dataframe
+                filtered_name_match = filtered_df['product_name'].fillna('').str.contains(query, case=False, na=False)
+                filtered_desc_match = filtered_df['about_product'].fillna('').str.contains(query, case=False, na=False)
+                filtered_cat_match = filtered_df['category'].fillna('').str.contains(query, case=False, na=False)
+                
+                filtered_df['relevance_score'] = (
+                    filtered_name_match.astype(int) * 3 +  # Name matches are most important
+                    filtered_desc_match.astype(int) * 1 +  # Description matches are less important
+                    filtered_cat_match.astype(int) * 2      # Category matches are moderately important
+                )
+                
+                # Sort by relevance score (highest first)
+                filtered_df = filtered_df.sort_values('relevance_score', ascending=False)
         
         # Filter by category (exact or partial match)
         if category:
@@ -84,7 +92,10 @@ class CSVRepository:
         
         # Filter by minimum rating
         if min_rating is not None:
-            filtered_df = filtered_df[filtered_df['rating'] >= min_rating]
+            # Convert rating to float, handling errors
+            filtered_df['rating_float'] = pd.to_numeric(filtered_df['rating'], errors='coerce')
+            filtered_df = filtered_df[filtered_df['rating_float'] >= min_rating]
+            filtered_df = filtered_df.drop(columns=['rating_float'])
         
         # Filter by maximum price
         if max_price is not None:

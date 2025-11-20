@@ -1,11 +1,22 @@
 from fastapi import APIRouter, HTTPException
 from ..repos.csv_repo import CSVRepository
 import time
+import math
 
 router = APIRouter(prefix="/items", tags=["items"])
 
 def get_csv_repo():
     return CSVRepository()
+
+def clean_nan_values(data):
+    """Replace NaN values with None for JSON serialization"""
+    if isinstance(data, list):
+        return [clean_nan_values(item) for item in data]
+    elif isinstance(data, dict):
+        return {key: clean_nan_values(value) for key, value in data.items()}
+    elif isinstance(data, float) and math.isnan(data):
+        return None
+    return data
 
 @router.get("/search")
 def search_products(
@@ -39,6 +50,9 @@ def search_products(
     total_pages = (total_results + size - 1) // size  # Ceiling division
     has_more = page < total_pages
     
+    # Clean NaN values for JSON serialization
+    products = clean_nan_values(products)
+    
     return {
         "products": products,
         "pagination": {
@@ -68,6 +82,11 @@ def get_product_details(product_id: str):
         raise HTTPException(status_code=404, detail="Product not found")
     
     related = repo.get_related_products(product_id)
+    
+    # Clean NaN values for JSON serialization
+    product = clean_nan_values(product)
+    related = clean_nan_values(related)
+    
     return {
         "product": product,
         "related": related
