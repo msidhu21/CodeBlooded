@@ -46,4 +46,4 @@ def test_update_all_fields_maps_contact_dict(svc):
     )
     out = svc.update(1, req)
     assert out.name == "Neo"
-    assert svc.repo.last_args == (1, "Neo", "p.png", {"email": "a@b.com", "phone": "555"})
+    assert svc.repo.last_args == (1, "Neo", "p.png", {"email": "a@b.com", "phone": "5555555"})
