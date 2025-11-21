@@ -37,6 +37,7 @@ def test_update_partial_fields_calls_repo_with_only_those_fields(svc):
     assert isinstance(out, AuthUser)
     assert svc.repo.last_args == (1, "New Name", None, None)
 
+
 def test_update_all_fields_maps_contact_dict(svc):
     req = ProfileUpdate(
         name="Neo",

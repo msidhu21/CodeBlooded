@@ -1,5 +1,6 @@
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from dataclasses import dataclass
 
 
 class RegisterRequest(BaseModel):
@@ -73,3 +74,12 @@ class ExportSelectionRequest(BaseModel):
 class ExportPayload(BaseModel):
     count: int
     items: List[ItemOut]
+
+
+class AuthUser(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    # internal name: user_id, JSON key: "id"
+    user_id: int = Field(alias="id")
+    email: str
+    name: str
+    role: str

@@ -5,7 +5,7 @@ from ..models.entities import Item
 from ..core.errors import NotFound, Conflict
 
 class ItemRepo:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session | None):
         self.db = db
 
     def by_id(self, item_id: int) -> Item:

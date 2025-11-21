@@ -1,14 +1,15 @@
 from ..repos.item_repo import ItemRepo
-from ..models.dto import ExportSelectionRequest, ExportPayload, ItemOut
+from ..models.dto import ExportSelectionRequest, ExportPayload
 
 
 class ExportService:
-    def __init__(self, db=None):
+    def __init__(self, db=None, repo: ItemRepo | None = None):
         """
-        db is kept for backwards compatibility with older tests
-        that call ExportService(db=...). We don't actually use it.
+        `db` is kept for backwards compatibility with older code/tests that
+        call ExportService(db=...). For unit tests, they usually inject a fake
+        repo by assigning to `svc.repo` directly, or pass `repo=...`.
         """
-        self.repo = ItemRepo()
+        self.repo = repo or ItemRepo(db)
 
     def export_selection(self, req: ExportSelectionRequest) -> ExportPayload:
         """
@@ -17,10 +18,5 @@ class ExportService:
         if not req.ids:
             return ExportPayload(count=0, items=[])
 
-        # Ask the repo for those items
-        rows = self.repo.by_ids(req.ids)
-
-        # Convert raw dicts/rows into ItemOut models
-        items = [ItemOut.model_validate(r) for r in rows]
-
-        return ExportPayload(count=len(items), items=items)
+        rows = self.repo.get_many(req.ids)
+        return ExportPayload(count=len(rows), items=rows)

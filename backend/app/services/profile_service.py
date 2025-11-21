@@ -1,21 +1,57 @@
-from typing import Dict, Any
+from __future__ import annotations
+
 from ..repos.user_repo import UserRepo
-from ..models.dto import ProfileUpdate, AuthUser
+from ..models.dto import ProfileUpdate, ContactInfo, AuthUser
+
 
 class ProfileService:
-    def __init__(self):
-        self.repo = UserRepo()
+    def __init__(self, repo: UserRepo | None = None):
+        # In real code, this will be the CSV repo.
+        # In tests, this gets replaced with StubRepo.
+        self.repo = repo or UserRepo()
+
+    def get(self, user_id: int) -> AuthUser:
+        row = self.repo.by_id(user_id)  # dict from CSV repo
+        return AuthUser(
+            user_id=row.get("user_id"),
+            email=row.get("email"),
+            name=row.get("name"),
+            role=row.get("role"),
+        )
 
     def update(self, user_id: int, req: ProfileUpdate) -> AuthUser:
-        """Apply partial updates (name, picture, contact) and return AuthUser."""
-        contact_dict: Dict[str, Any] | None = None
-        if req.contact is not None:
-            contact_dict = req.contact.dict()
+        name = getattr(req, "name", None)
+        picture = getattr(req, "picture", None)
+        contact = getattr(req, "contact", None)
 
+        # Convert contact into a dict so StubRepo can do contact.get(...)
+        contact_arg = None
+        if contact is not None:
+            if isinstance(contact, dict):
+                contact_arg = contact
+            elif hasattr(contact, "dict"):
+                contact_arg = contact.dict()
+            elif hasattr(contact, "model_dump"):
+                contact_arg = contact.model_dump()
+            else:
+                contact_arg = {
+                    "email": getattr(contact, "email", None),
+                    "phone": getattr(contact, "phone", None),
+                }
+
+        # This matches StubRepo.update_profile(self, user_id, *, name=None, picture=None, contact=None)
         updated = self.repo.update_profile(
             user_id,
-            name=req.name,
-            picture=req.picture,
-            contact=contact_dict,
+            name=name,
+            picture=picture,
+            contact=contact_arg,
         )
-        return AuthUser.model_validate(updated)
+
+        # StubRepo returns a dict with keys: user_id, email, name, role, picture?, contact_email?, contact_phone?
+        # AuthUser only needs these four:
+        return AuthUser(
+            user_id=updated.get("user_id"),
+            email=updated.get("email"),
+            name=updated.get("name"),
+            role=updated.get("role"),
+        )
