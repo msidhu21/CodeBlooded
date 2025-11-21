@@ -34,7 +34,7 @@ def test_patch_profile_smoke(monkeypatch):
             json={
                 "name": "Patched",
                 "picture": "x.png",
-                "contact": {"email": "admin@cosc310.ca", "phone": "999"},
+                "contact": {"email": "admin@cosc310.ca", "phone": "9999999"},
             },
             timeout=5.0,
         )
