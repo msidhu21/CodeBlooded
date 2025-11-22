@@ -1,3 +1,0 @@
-pr_number,changes_made,reason
-24,"Refactored ProfileService to isolate repo calls","Improved testability and separation of concerns"
-24,"Adjusted DTO to include id/user_id alias","Resolved Pydantic validation issue"
