@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 from pathlib import Path
 import threading
 from typing import Optional
@@ -6,7 +7,7 @@ from ..core.errors import Conflict, NotFound
 
 
 class UserRepo:
-    _lock = threading.Lock()
+    # Instance-level lock for each repository instance
     
     def __init__(self, csv_path: str = None):
         if csv_path is None:
@@ -14,17 +15,29 @@ class UserRepo:
             csv_path = base_path / "data" / "users.csv"
 
         self.csv_path = Path(csv_path)
+        self._lock = threading.RLock()  # Use RLock for reentrant locking
         self._reload()
     
     def _reload(self):
+        """Reload data from CSV file"""
         self.df = pd.read_csv(self.csv_path)
         for col in ["phone", "avatar_url"]:
             if col not in self.df.columns:
                 self.df[col] = ""
     
     def _save(self):
+        """Save data to CSV file - optimized for performance using built-in csv module"""
         with self._lock:
-            self.df.to_csv(self.csv_path, index=False)
+            # Convert DataFrame to list of dicts for faster writing
+            records = self.df.to_dict('records')
+            if not records:
+                return
+            
+            # Use Python's built-in csv module for faster writes
+            with open(self.csv_path, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(f, fieldnames=records[0].keys())
+                writer.writeheader()
+                writer.writerows(records)
     
     def by_email(self, email: str) -> Optional[dict]:
         result = self.df[self.df["email"] == email]

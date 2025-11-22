@@ -1,10 +1,12 @@
 import pandas as pd
+import threading
 
 from app.repos.user_repo import UserRepo
 
 
 def make_repo():
     repo = UserRepo.__new__(UserRepo)
+    repo._lock = threading.RLock()  # Add the lock that __init__ would create
     repo.df = pd.DataFrame(
         [
             {
