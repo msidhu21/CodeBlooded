@@ -1,3 +1,4 @@
+from typing import List
 from ..repos.csv_repo import CSVRepository
 from ..models.dto import ExportSelectionRequest, ExportPayload, ItemOut
 
@@ -18,7 +19,7 @@ class ExportService:
             return ExportPayload(count=0, items=[])
 
         # Ask the repo for those items - convert int ids to string for CSV
-        str_ids = [str(id) for id in req.ids]
+        str_ids: List[str] = [str(id) for id in req.ids]
         rows = self.repo.get_products_by_ids(str_ids)
 
         # Convert raw dicts/rows into ItemOut models
