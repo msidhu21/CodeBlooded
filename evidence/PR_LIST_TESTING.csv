@@ -1,0 +1,2 @@
+pr_number,pr_title,tests_added,ci_status,link
+24,"User Story 4 - Profile Update Testing","unit + integration tests for profile","passed","https://github.com/msidhu21/CodeBlooded/pull/24"
