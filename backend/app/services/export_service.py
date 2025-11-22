@@ -10,11 +10,14 @@ class ExportService:
         """
         self.repo = CSVRepository()
 
+    def _is_empty(self, ids):
+        return not ids
+
     def export_selection(self, req: ExportSelectionRequest) -> ExportPayload:
         """
         Export selected items by their IDs.
         """
-        if not req.ids:
+        if self._is_empty(req.ids):
             return ExportPayload(count=0, items=[])
 
         # Ask the repo for those items - convert int ids to string for CSV
