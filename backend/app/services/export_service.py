@@ -13,6 +13,9 @@ class ExportService:
     def _prepare_ids(self, ids):
         return [str(id) for id in ids]
 
+    def _to_item_models(self, rows):
+        return [ItemOut.model_validate(r) for r in rows]
+
     def export_selection(self, req: ExportSelectionRequest) -> ExportPayload:
         """
         Export selected items by their IDs.
@@ -23,7 +26,6 @@ class ExportService:
         str_ids = self._prepare_ids(req.ids)
         rows = self.repo.get_products_by_ids(str_ids)
 
-        # Convert raw dicts/rows into ItemOut models
-        items = [ItemOut.model_validate(r) for r in rows]
+        items = self._to_item_models(rows)
 
         return ExportPayload(count=len(items), items=items)
