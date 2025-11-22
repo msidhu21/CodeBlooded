@@ -1,5 +1,7 @@
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, ValidationError, field_validator
+from typing import Optional
+from dataclasses import dataclass
 
 
 class RegisterRequest(BaseModel):
@@ -59,10 +61,20 @@ class ContactInfo(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
 
+    @field_validator("phone")
+    def phone_length(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        if len(v) < 7 or len(v) > 15:
+            raise ValueError("Invalid phone number length")
+        return v
+
+
 class ProfileUpdate(BaseModel):
     name: Optional[str] = None
     picture: Optional[str] = None
     contact: Optional[ContactInfo] = None
+
 
 
 # -------- Export --------
@@ -73,3 +85,12 @@ class ExportSelectionRequest(BaseModel):
 class ExportPayload(BaseModel):
     count: int
     items: List[ItemOut]
+
+
+class AuthUser(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    # internal name: user_id, JSON key: "id"
+    user_id: int = Field(alias="id")
+    email: str
+    name: str
+    role: str

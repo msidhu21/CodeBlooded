@@ -3,12 +3,13 @@ from ..models.dto import ExportSelectionRequest, ExportPayload, ItemOut
 
 
 class ExportService:
-    def __init__(self, db=None):
+    def __init__(self, db=None, repo=None):
         """
         db parameter kept for backwards compatibility with tests.
         Uses CSVRepository for actual data access.
+        repo parameter allows tests to inject fake repositories.
         """
-        self.repo = CSVRepository()
+        self.repo = repo or CSVRepository()
 
     def export_selection(self, req: ExportSelectionRequest) -> ExportPayload:
         """
