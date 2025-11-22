@@ -13,19 +13,23 @@ class ExportService:
     def _prepare_ids(self, ids):
         return [str(id) for id in ids]
 
-    def _to_item_models(self, rows):
-        return [ItemOut.model_validate(r) for r in rows]
+    def _handle_empty_request(self, req: ExportSelectionRequest):
+        if not req.ids:
+            return ExportPayload(count=0, items=[])
+        return None
 
     def export_selection(self, req: ExportSelectionRequest) -> ExportPayload:
         """
         Export selected items by their IDs.
         """
-        if not req.ids:
-            return ExportPayload(count=0, items=[])
+        empty_result = self._handle_empty_request(req)
+        if empty_result:
+            return empty_result
 
         str_ids = self._prepare_ids(req.ids)
         rows = self.repo.get_products_by_ids(str_ids)
 
-        items = self._to_item_models(rows)
+        # Convert raw dicts/rows into ItemOut models
+        items = [ItemOut.model_validate(r) for r in rows]
 
         return ExportPayload(count=len(items), items=items)
