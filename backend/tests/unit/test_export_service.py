@@ -12,3 +12,8 @@ def test_export_selection_basic():
     assert out.count == 2
     assert [x.id for x in out.items] == [1,3]
 
+def test_export_selection_empty_repo_response():
+    svc = ExportService(db=None)
+    svc.repo = type("FakeRepo", (), {"get_products_by_ids": lambda self, ids: []})()
+    out = svc.export_selection(ExportSelectionRequest(ids=[1]))
+    assert out.count == 0
