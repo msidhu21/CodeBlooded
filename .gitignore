@@ -3,9 +3,6 @@ __pycache__/
 .venv/
 .env
 *.db
-.evidence/
-evidence/**
-!evidence/coverage.xml
 .vscode/
 .idea/
 .coverage
