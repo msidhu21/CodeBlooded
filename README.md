@@ -1,11 +1,7 @@
 
-# CodeBlooded 
-# modifcation try1
-# Olamipo modification
+# CodeBlooded - COSC 310 Project
 
-# COSC 310 Backend (M3)
-
-FastAPI backend with SQLite, layered architecture.
+Full-stack product catalog system with FastAPI backend and Next.js frontend.
 
 ## Setup
 
@@ -36,11 +32,23 @@ cd backend
 pytest -q --cov=app --cov-report=term --cov-report=xml:../evidence/coverage.xml
 ```
 
+## Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs on http://localhost:3000
+
 ## Docker
 
 ```bash
 docker compose up --build
 ```
+
+Runs both backend (port 8000) and frontend (port 3000).
 
 ## API Endpoints
 
