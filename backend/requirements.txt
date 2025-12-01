@@ -9,4 +9,5 @@ python-multipart
 passlib[bcrypt]==1.7.4
 pandas==2.2.2
 pyjwt
+python-dotenv==1.0.0
 
