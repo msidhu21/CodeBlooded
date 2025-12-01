@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from ..repos.csv_repo import CSVRepository
+from ..services.items_recommendation_service import recommend_items_for_query
 import time
 import math
 
@@ -117,4 +118,17 @@ def get_product_details(product_id: str):
 def get_categories():
     repo = get_csv_repo()
     return {"categories": repo.get_categories()}
+
+@router.get("/recommend")
+def recommend_items(
+    query: str = Query(..., min_length=1, description="Search query for item recommendations"),
+    limit: int = Query(10, ge=1, le=50, description="Maximum number of recommendations to return")
+):
+    items, total_found = recommend_items_for_query(query, limit)
+    cleaned_items = clean_nan_values(items)
+    return {
+        "items": cleaned_items,
+        "query": query,
+        "total_found": total_found
+    }
 
