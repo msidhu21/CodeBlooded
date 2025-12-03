@@ -10,6 +10,12 @@ class ExportService:
         """
         self.repo = CSVRepository()
 
+    def _prepare_ids(self, ids):
+        return [str(id) for id in ids]
+
+    def _to_item_models(self, rows):
+        return [ItemOut.model_validate(r) for r in rows]
+
     def export_selection(self, req: ExportSelectionRequest) -> ExportPayload:
         """
         Export selected items by their IDs.
@@ -17,11 +23,7 @@ class ExportService:
         if not req.ids:
             return ExportPayload(count=0, items=[])
 
-        # Ask the repo for those items - convert int ids to string for CSV
-        str_ids = [str(id) for id in req.ids]
+        str_ids = self._prepare_ids(req.ids)
         rows = self.repo.get_products_by_ids(str_ids)
-
-        # Convert raw dicts/rows into ItemOut models
-        items = [ItemOut.model_validate(r) for r in rows]
-
+        items = self._to_item_models(rows)
         return ExportPayload(count=len(items), items=items)
