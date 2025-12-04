@@ -1,18 +1,28 @@
 from fastapi import APIRouter
-from ..models.dto import RegisterRequest, LoginRequest, AuthUser
-from ..services.auth_service import AuthService
+import json, os
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth")
 
-@router.post("/register", response_model=AuthUser, status_code=201)
-def register(req: RegisterRequest):
-    return AuthService().register(req)
+DATA_PATH = "app/data/users.json"
 
-@router.post("/login", response_model=AuthUser)
-def login(req: LoginRequest):
-    return AuthService().login(req)
+@router.post("/register")
+def register(user: dict):
+    os.makedirs("app/data", exist_ok=True)
 
-@router.get("/me", response_model=AuthUser)
-def me_demo():
-    return AuthUser(id=1, email="demo@cosc310.ca", name="Demo", role="admin")
+    if os.path.exists(DATA_PATH):
+        with open(DATA_PATH, "r") as f:
+            users = json.load(f)
+    else:
+        users = []
+
+    if any(u["email"] == user.get("email") for u in users):
+        return {"error": "User already exists"}
+
+    users.append(user)
+
+    with open(DATA_PATH, "w") as f:
+        json.dump(users, f, indent=2)
+
+    return {"message": "User created successfully"}
+
 

@@ -13,6 +13,13 @@ export interface Product {
   product_link?: string;
   relevance_score?: number;
   score?: number; // For recommendations
+   id?: string | number;
+  title?: string;
+  price?: number | string;
+
+  item_title?: string;
+  item_category?: string;
+  item_price?: number | string;
 }
 
 export interface SearchResponse {

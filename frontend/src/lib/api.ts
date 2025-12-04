@@ -86,6 +86,13 @@ class ApiClient {
     });
   }
 
+  async registerUser(data: { name: string; email: string; password: string }) {
+    return this.request('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
   async getAllItems() {
     return this.searchItems({ page: 1, size: 1000 });
   }
@@ -112,4 +119,5 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient(API_URL);
+
 
