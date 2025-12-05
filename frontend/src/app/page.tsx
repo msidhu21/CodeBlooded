@@ -30,9 +30,10 @@ export default function HomePage() {
     compact: false,
   });
 
-  // Fetch categories on mount
+  // Fetch categories and initial products on mount
   useEffect(() => {
     fetchCategories();
+    performSearch(1); // Load all products by default
   }, []);
 
   const fetchCategories = async () => {
@@ -332,6 +333,14 @@ export default function HomePage() {
             </div>
           )}
 
+          {/* Browse All Products Heading */}
+          {searchResponse && searchResponse.products.length > 0 && !filters.query && getActiveFiltersCount() === 0 && (
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">Browse All Products</h2>
+              <p className="text-gray-600 mt-1">Explore our complete catalog of {searchResponse.pagination.total_results} products</p>
+            </div>
+          )}
+
           {/* Search Metadata */}
           {searchResponse && searchResponse.products.length > 0 && (
             <div className="card p-4 mb-6">
@@ -485,22 +494,6 @@ export default function HomePage() {
                 <RecommendedList query={filters.query} />
               )}
             </>
-          )}
-
-          {/* Initial State */}
-          {!isLoading && !searchResponse && (
-            <div className="card p-12 text-center">
-              <h2 className="text-xl font-semibold mb-2">Welcome to Product Catalog</h2>
-              <p className="text-gray-600 mb-4">
-                Use the filters on the left to find products, or browse all items
-              </p>
-              <button
-                onClick={() => performSearch(1)}
-                className="btn btn-primary"
-              >
-                Browse All Products
-              </button>
-            </div>
           )}
         </div>
 
