@@ -152,6 +152,13 @@ class ApiClient {
     });
   }
 
+  async checkCart(productId: string) {
+    const userId = this.getUserId();
+    return this.request<{ is_in_cart: boolean }>(`/cart/${productId}/check`, {
+      headers: userId ? { 'X-User-Id': userId } : {},
+    });
+  }
+
   async getCart() {
     const userId = this.getUserId();
     return this.request<any[]>('/cart', {
