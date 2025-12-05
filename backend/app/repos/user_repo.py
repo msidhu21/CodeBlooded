@@ -56,6 +56,39 @@ class UserRepo:
             return None
         return result.iloc[0].to_dict()
 
+    def create(self, email: str, password_hash: str, name: str = "", role: str = "user") -> dict:
+        """Create a new user and add them to the CSV."""
+        with self._lock:
+            # Check if email already exists
+            if not self.df[self.df["email"] == email].empty:
+                raise Conflict("Email already exists")
+
+            # Generate new user_id (max existing id + 1)
+            if self.df.empty or "user_id" not in self.df.columns:
+                new_id = 1
+            else:
+                new_id = int(self.df["user_id"].max()) + 1
+
+            # Create new user record with all required fields
+            new_user = {
+                "user_id": new_id,
+                "email": email,
+                "password_hash": password_hash,
+                "name": name,
+                "role": role,
+                "picture": "",
+                "contact_email": "",
+                "contact_phone": "",
+            }
+
+            # Add to dataframe
+            self.df = pd.concat([self.df, pd.DataFrame([new_user])], ignore_index=True)
+            
+            # Save to CSV
+            self._save()
+            
+            return new_user
+
     def update_profile(self, user_id: int, **updates) -> dict:
         """Dynamically update ANY editable field."""
         with self._lock:
