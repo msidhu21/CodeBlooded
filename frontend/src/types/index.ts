@@ -13,6 +13,7 @@ export interface Product {
   product_link?: string;
   relevance_score?: number;
   score?: number; // For recommendations
+  highlighted_fields?: string[]; // Fields containing search query matches
 }
 
 export interface SearchResponse {

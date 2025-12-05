@@ -7,6 +7,7 @@ pytest
 pytest-cov
 python-multipart
 passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
 pandas==2.2.2
 pyjwt
 python-dotenv==1.0.0

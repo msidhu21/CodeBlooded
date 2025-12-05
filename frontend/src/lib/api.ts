@@ -109,6 +109,26 @@ class ApiClient {
       body: JSON.stringify(data),
     });
   }
+
+  async getWishlist() {
+    return this.request<{ products: any[]; count: number }>('/wishlist');
+  }
+
+  async addToWishlist(productId: string) {
+    return this.request<{ message: string; item: any }>(`/wishlist/${productId}`, {
+      method: 'POST',
+    });
+  }
+
+  async removeFromWishlist(productId: string) {
+    return this.request<{ message: string }>(`/wishlist/${productId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async checkWishlist(productId: string) {
+    return this.request<{ is_in_wishlist: boolean }>(`/wishlist/${productId}/check`);
+  }
 }
 
 export const apiClient = new ApiClient(API_URL);

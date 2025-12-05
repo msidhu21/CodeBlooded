@@ -77,3 +77,27 @@ class ExportSelectionRequest(BaseModel):
 class ExportPayload(BaseModel):
     count: int
     items: List[ItemOut]
+
+# -------- Cart --------
+class CartItemAddRequest(BaseModel):
+    user_id: str
+    product_id: str
+
+class CartItemResponse(BaseModel):
+    user_id: str
+    product_id: str
+
+# -------- Wishlist --------
+class WishlistAddRequest(BaseModel):
+    product_id: str
+
+class WishlistRemoveRequest(BaseModel):
+    product_id: str
+
+class WishlistResponse(BaseModel):
+    products: List[dict]
+    count: int
+
+class WishlistCheckResponse(BaseModel):
+    is_in_wishlist: bool
+    product_id: str
