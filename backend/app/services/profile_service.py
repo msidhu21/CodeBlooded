@@ -18,5 +18,6 @@ class ProfileService:
             picture=req.picture,
             contact_email=req.contact_email,
             contact_phone=req.contact_phone,
+            location=req.location,
         )
         return AuthUser(**updated)
