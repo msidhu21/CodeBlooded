@@ -119,11 +119,15 @@ class CSVRepository:
         
         # Filter by minimum rating
         if min_rating is not None:
-            filtered_df = filtered_df[filtered_df['rating'] >= min_rating]
+            # Convert rating to float for comparison
+            filtered_df['rating_float'] = pd.to_numeric(filtered_df['rating'], errors='coerce')
+            filtered_df = filtered_df[filtered_df['rating_float'] >= min_rating]
         
         # Filter by maximum rating
         if max_rating is not None:
-            filtered_df = filtered_df[filtered_df['rating'] <= max_rating]
+            if 'rating_float' not in filtered_df.columns:
+                filtered_df['rating_float'] = pd.to_numeric(filtered_df['rating'], errors='coerce')
+            filtered_df = filtered_df[filtered_df['rating_float'] <= max_rating]
         
         # Filter by price range
         if min_price is not None or max_price is not None:
