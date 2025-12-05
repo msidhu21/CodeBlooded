@@ -11,4 +11,7 @@ user_id,email,password_hash,name,role,picture,contact_email,contact_phone
 10,test_654b058b4202474caa29cd36dc79db69@example.com,$2b$12$UG6siFc6guiWr1HiI4TfouVnbHRVt6Yvvuugqq8EPlZSbI17B3d.O,Pytest User,user,nan,nan,nan
 11,duplicate_721d882502184bba8a7c15e8f99c75a4@example.com,$2b$12$dBFabPi.TgehFe4RWaWLTu5bqt.EML3pNpsMfQ9s/9/jvya7UeCm2,First User,user,nan,nan,nan
 12,test_3712b4738b41420c87a6018e9ef81d20@example.com,$2b$12$RnycM1smXx5GPVxcQ2xvx.3MU9dUkoWCAAJbVoavJ818sdv9qE7fW,Pytest User,user,nan,nan,nan
-13,duplicate_5037aeef3c674024921bd134cd591275@example.com,$2b$12$cxg5lRJLtY5PZOFlJbizv.YSyDQNuD1Uz4shA9ip0a1xSXsVEJDAO,First User,user,,,
+13,duplicate_5037aeef3c674024921bd134cd591275@example.com,$2b$12$cxg5lRJLtY5PZOFlJbizv.YSyDQNuD1Uz4shA9ip0a1xSXsVEJDAO,First User,user,nan,nan,nan
+14,test_aa88db3c593b43d98e5db319f8ed5cbe@example.com,$2b$12$kR9hT.SDhBm/kDzu1oPIseUchbvLA79KOoRsyKHnIIGi4lB5ziUd.,Pytest User,user,nan,nan,nan
+15,duplicate_c6fb65fada284f82adafe43f8994a8dc@example.com,$2b$12$tpeuBqAkmQMW1nYFACUlCujNWsP6H3PK8pgGiFaueJF5YAdceQLiG,First User,user,nan,nan,nan
+16,test_bf903ade@example.com,$2b$12$YUZzNooaLM1JF/xfTHpHl.bifIEB.Z5P0ivzvp6yK3qc0dbjRAUQW,Test User,user,,,
