@@ -1,3 +1,5 @@
-user_id,email,password_hash,name,role
-1,admin@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Admin User,admin
-2,demo@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Demo User,user
+user_id,email,password_hash,name,role,picture,contact_email,contact_phone
+1,admin@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Admin User,admin,https://static.generated.photos/vue-static/face-generator/landing/wall/14.jpg,,
+2,demo@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Demo User,user,,,
+3,test@cosc310.ca,$2b$12$CvvneImJrECvwfZqTSNH2eBHnwD5Xf6V6TKwZb0ZgDHtu8uKP72h.,Test User,user,,,
+4,newuser@example.com,$2b$12$ciSwBNHqKlekI/lFgQd8F.K2HTeDMDrDsqS9is4ZFzN8VfYEocjXi,Test User,user,,,

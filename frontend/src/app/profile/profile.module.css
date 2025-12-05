@@ -1,0 +1,94 @@
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: Inter, sans-serif;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+.card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  display: flex;
+  gap: 40px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+}
+
+.photoSection {
+  width: 260px;
+  text-align: center;
+}
+
+.avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #eaeaea;
+}
+
+.hint {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #666;
+}
+
+.formSection {
+  flex: 1;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+.field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.field input,
+.input {
+  padding: 10px 12px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.saveButton {
+  background: #0044ff;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.saveButton:hover {
+  background: #0033cc;
+}
+
+.message {
+  margin-top: 12px;
+  color: green;
+  font-size: 14px;
+}
