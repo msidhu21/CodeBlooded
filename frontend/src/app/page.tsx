@@ -46,44 +46,47 @@ export default function HomePage() {
     }
   };
 
-  const performSearch = async (page: number = 1) => {
+  const performSearch = async (page: number = 1, customFilters?: FilterState) => {
     setIsLoading(true);
     setError(null);
+    
+    // Use provided filters or current state
+    const searchFilters = customFilters || filters;
     
     try {
       const params = new URLSearchParams();
       
       // Add search query
-      if (filters.query) params.append('q', filters.query);
+      if (searchFilters.query) params.append('q', searchFilters.query);
       
       // Add category filter - handle both single category (backward compat) and multiple categories
-      if (filters.categories && filters.categories.length > 0) {
+      if (searchFilters.categories && searchFilters.categories.length > 0) {
         // For multiple categories, we'll filter by joining them
         // The backend will match if any of these categories are found in the product's category string
         // We'll send the first category and the others will be filtered client-side for now
         // TODO: Update backend to support multiple category filters
-        params.append('category', filters.categories[0]);
-      } else if (filters.category) {
-        params.append('category', filters.category);
+        params.append('category', searchFilters.categories[0]);
+      } else if (searchFilters.category) {
+        params.append('category', searchFilters.category);
       }
       
       // Add rating filters
-      if (filters.minRating) params.append('min_rating', filters.minRating);
-      if (filters.maxRating) params.append('max_rating', filters.maxRating);
+      if (searchFilters.minRating) params.append('min_rating', searchFilters.minRating);
+      if (searchFilters.maxRating) params.append('max_rating', searchFilters.maxRating);
       
       // Add price filters
-      if (filters.minPrice) params.append('min_price', filters.minPrice);
-      if (filters.maxPrice) params.append('max_price', filters.maxPrice);
+      if (searchFilters.minPrice) params.append('min_price', searchFilters.minPrice);
+      if (searchFilters.maxPrice) params.append('max_price', searchFilters.maxPrice);
       
       // Add discount filter
-      if (filters.minDiscount) params.append('min_discount', filters.minDiscount);
+      if (searchFilters.minDiscount) params.append('min_discount', searchFilters.minDiscount);
       
       // Add pagination
       params.append('page', page.toString());
       params.append('size', '20');
       
       // Add compact mode
-      if (filters.compact) params.append('compact', 'true');
+      if (searchFilters.compact) params.append('compact', 'true');
       
       const response = await fetch(`${API_BASE_URL}/items/search?${params.toString()}`);
       
@@ -113,15 +116,17 @@ export default function HomePage() {
   };
 
   const handleCategoryClick = (category: string) => {
-    setFilters({ ...filters, category, query: '' });
+    const newFilters = { ...filters, category, query: '' };
+    setFilters(newFilters);
     setCurrentPage(1);
-    setTimeout(() => performSearch(1), 100);
+    performSearch(1, newFilters);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setFilters({ ...filters, query: suggestion });
+    const newFilters = { ...filters, query: suggestion };
+    setFilters(newFilters);
     setCurrentPage(1);
-    setTimeout(() => performSearch(1), 100);
+    performSearch(1, newFilters);
   };
 
   const getActiveFiltersCount = () => {
@@ -140,19 +145,16 @@ export default function HomePage() {
   const clearFilter = (filterKey: keyof FilterState) => {
     const newFilters = { ...filters, [filterKey]: filterKey === 'categories' ? [] : '' };
     setFilters(newFilters);
-    setTimeout(() => {
-      setCurrentPage(1);
-      performSearch(1);
-    }, 100);
+    setCurrentPage(1);
+    performSearch(1, newFilters);
   };
 
   const removeCategoryFromFilter = (categoryToRemove: string) => {
     const newCategories = filters.categories?.filter(cat => cat !== categoryToRemove) || [];
-    setFilters({ ...filters, categories: newCategories, category: '' });
-    setTimeout(() => {
-      setCurrentPage(1);
-      performSearch(1);
-    }, 100);
+    const newFilters = { ...filters, categories: newCategories, category: '' };
+    setFilters(newFilters);
+    setCurrentPage(1);
+    performSearch(1, newFilters);
   };
 
   return (
