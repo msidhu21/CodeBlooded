@@ -29,37 +29,37 @@ export default function WishlistPage() {
   }, []);
 
   return (
-    <div className="container">
-      <header style={{ marginBottom: '30px', paddingBottom: '20px', borderBottom: '2px solid #ddd' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1 style={{ fontSize: '32px' }}>My Wishlist</h1>
+    <div className="container mx-auto px-4 py-8">
+      <header className="mb-8 pb-6 border-b-2 border-gray-300">
+        <div className="flex justify-between items-center">
+          <h1 className="text-4xl font-bold">My Wishlist</h1>
           <Link href="/" className="btn btn-secondary">
             Back to Browse
           </Link>
         </div>
       </header>
 
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error p-4 mb-6">{error}</div>}
 
       {loading ? (
-        <div className="loading">Loading wishlist...</div>
+        <div className="loading text-center py-12">Loading wishlist...</div>
       ) : (
         <>
           {products.length > 0 ? (
             <>
-              <div style={{ marginBottom: '20px', color: '#666' }}>
+              <div className="mb-6 text-gray-600">
                 {products.length} item{products.length !== 1 ? 's' : ''} in your wishlist
               </div>
-              <div className="grid">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {products.map((product) => (
                   <ProductCard key={product.product_id} product={product} />
                 ))}
               </div>
             </>
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px' }}>
-              <h2 style={{ fontSize: '24px', marginBottom: '10px' }}>Your wishlist is empty</h2>
-              <p style={{ color: '#666', marginBottom: '20px' }}>
+            <div className="text-center py-16">
+              <h2 className="text-2xl font-bold mb-3">Your wishlist is empty</h2>
+              <p className="text-gray-600 mb-6">
                 Start adding products to your wishlist to save them for later!
               </p>
               <Link href="/" className="btn btn-primary">
