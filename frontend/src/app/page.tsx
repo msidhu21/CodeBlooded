@@ -16,6 +16,7 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
   
   const [filters, setFilters] = useState<FilterState>({
     query: '',
@@ -43,6 +44,24 @@ export default function HomePage() {
       }
     } catch (err) {
       console.error('Failed to fetch categories:', err);
+    }
+  };
+
+  const fetchSuggestedProducts = async () => {
+    try {
+      // Fetch popular products (high rating, good discount)
+      const params = new URLSearchParams();
+      params.append('min_rating', '4.0');
+      params.append('size', '8');
+      params.append('page', '1');
+      
+      const response = await fetch(`${API_BASE_URL}/items/search?${params.toString()}`);
+      if (response.ok) {
+        const data: SearchResponse = await response.json();
+        setSuggestedProducts(data.products);
+      }
+    } catch (err) {
+      console.error('Failed to fetch suggested products:', err);
     }
   };
 
@@ -97,6 +116,11 @@ export default function HomePage() {
       const data: SearchResponse = await response.json();
       setSearchResponse(data);
       setCurrentPage(page);
+      
+      // Fetch suggested products if no results found
+      if (data.products.length === 0) {
+        fetchSuggestedProducts();
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Search failed');
       console.error('Search error:', err);
@@ -317,63 +341,77 @@ export default function HomePage() {
 
           {/* No Results Message */}
           {!isLoading && searchResponse && searchResponse.products.length === 0 && (
-            <div className="card p-8 text-center">
-              <div className="mb-4">
-                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">No products found</h3>
-              <p className="text-gray-600 mb-6">
-                {filters.query ? (
-                  <>We couldn't find any products matching "<strong>{filters.query}</strong>"</>
-                ) : (
-                  <>No products match your current filters</>
-                )}
-              </p>
-              <div className="space-y-4">
-                <p className="text-sm text-gray-500">Try:</p>
-                <ul className="text-sm text-gray-600 space-y-2">
-                  <li>• Using different keywords</li>
-                  <li>• Checking your spelling</li>
-                  <li>• Using more general search terms</li>
-                  {(filters.categories.length > 0 || filters.minRating || filters.minPrice || filters.maxPrice || filters.minDiscount) && (
-                    <li>• Removing some filters</li>
+            <>
+              <div className="card p-8 text-center mb-8">
+                <div className="mb-4">
+                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold mb-2">No products found</h3>
+                <p className="text-gray-600 mb-6">
+                  {filters.query ? (
+                    <>We couldn't find any products matching "<strong>{filters.query}</strong>"</>
+                  ) : (
+                    <>No products match your current filters</>
                   )}
-                </ul>
+                </p>
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-500">Try:</p>
+                  <ul className="text-sm text-gray-600 space-y-2">
+                    <li>• Using different keywords</li>
+                    <li>• Checking your spelling</li>
+                    <li>• Using more general search terms</li>
+                    {(filters.categories.length > 0 || filters.minRating || filters.minPrice || filters.maxPrice || filters.minDiscount) && (
+                      <li>• Removing some filters</li>
+                    )}
+                  </ul>
+                </div>
+                {(filters.query || filters.categories.length > 0 || filters.minRating) && (
+                  <button
+                    onClick={() => {
+                      setFilters({
+                        query: '',
+                        category: '',
+                        categories: [],
+                        minRating: '',
+                        maxRating: '',
+                        minPrice: '',
+                        maxPrice: '',
+                        minDiscount: '',
+                        compact: false,
+                      });
+                      performSearch(1, {
+                        query: '',
+                        category: '',
+                        categories: [],
+                        minRating: '',
+                        maxRating: '',
+                        minPrice: '',
+                        maxPrice: '',
+                        minDiscount: '',
+                        compact: false,
+                      });
+                    }}
+                    className="btn mt-6"
+                  >
+                    Clear all filters
+                  </button>
+                )}
               </div>
-              {(filters.query || filters.categories.length > 0 || filters.minRating) && (
-                <button
-                  onClick={() => {
-                    setFilters({
-                      query: '',
-                      category: '',
-                      categories: [],
-                      minRating: '',
-                      maxRating: '',
-                      minPrice: '',
-                      maxPrice: '',
-                      minDiscount: '',
-                      compact: false,
-                    });
-                    performSearch(1, {
-                      query: '',
-                      category: '',
-                      categories: [],
-                      minRating: '',
-                      maxRating: '',
-                      minPrice: '',
-                      maxPrice: '',
-                      minDiscount: '',
-                      compact: false,
-                    });
-                  }}
-                  className="btn mt-6"
-                >
-                  Clear all filters
-                </button>
+
+              {/* Suggested Products */}
+              {suggestedProducts.length > 0 && (
+                <div className="mb-8">
+                  <h3 className="text-xl font-semibold mb-4">You might also be interested in...</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {suggestedProducts.map((product: Product) => (
+                      <ProductCard key={product.product_id} product={product} />
+                    ))}
+                  </div>
+                </div>
               )}
-            </div>
+            </>
           )}
 
           {/* Results Grid */}
