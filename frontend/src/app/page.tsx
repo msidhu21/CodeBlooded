@@ -337,33 +337,35 @@ export default function HomePage() {
                   <li>• Using different keywords</li>
                   <li>• Checking your spelling</li>
                   <li>• Using more general search terms</li>
-                  {(filters.categories.length > 0 || filters.min_rating || filters.min_price || filters.max_price || filters.min_discount) && (
+                  {(filters.categories.length > 0 || filters.minRating || filters.minPrice || filters.maxPrice || filters.minDiscount) && (
                     <li>• Removing some filters</li>
                   )}
                 </ul>
               </div>
-              {(filters.query || filters.categories.length > 0 || filters.min_rating) && (
+              {(filters.query || filters.categories.length > 0 || filters.minRating) && (
                 <button
                   onClick={() => {
                     setFilters({
                       query: '',
                       category: '',
                       categories: [],
-                      min_rating: undefined,
-                      max_rating: undefined,
-                      min_price: undefined,
-                      max_price: undefined,
-                      min_discount: undefined
+                      minRating: '',
+                      maxRating: '',
+                      minPrice: '',
+                      maxPrice: '',
+                      minDiscount: '',
+                      compact: false,
                     });
                     performSearch(1, {
                       query: '',
                       category: '',
                       categories: [],
-                      min_rating: undefined,
-                      max_rating: undefined,
-                      min_price: undefined,
-                      max_price: undefined,
-                      min_discount: undefined
+                      minRating: '',
+                      maxRating: '',
+                      minPrice: '',
+                      maxPrice: '',
+                      minDiscount: '',
+                      compact: false,
                     });
                   }}
                   className="btn mt-6"
