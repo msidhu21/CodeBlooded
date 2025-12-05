@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { login } from "@/lib/api/auth";
+import Link from "next/link";
 import "@/styles/auth.css";
 
 export default function LoginPage() {
@@ -63,6 +64,13 @@ export default function LoginPage() {
       </form>
 
       {message && <p className="auth-message">{message}</p>}
+
+      <div className="auth-link">
+        <p>Don't have an account?</p>
+        <Link href="/register">
+          <button className="auth-secondary-button">Sign Up</button>
+        </Link>
+      </div>
     </main>
   );
 }

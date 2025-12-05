@@ -48,3 +48,32 @@
   font-size: 0.9rem;
   text-align: center;
 }
+
+.auth-link {
+  margin-top: 1.5rem;
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.auth-link p {
+  margin-bottom: 0.75rem;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.auth-secondary-button {
+  padding: 10px 24px;
+  background: transparent;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.auth-secondary-button:hover {
+  background: #2563eb;
+  color: white;
+}
