@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { register } from "@/lib/api/auth";
+import Link from "next/link";
 import "@/styles/auth.css";
 
 export default function RegisterPage() {
@@ -22,8 +23,8 @@ export default function RegisterPage() {
       // Save session
       localStorage.setItem("user", JSON.stringify(user));
 
-      // Redirect to profile
-      window.location.href = "/profile";
+      // Redirect to home
+      window.location.href = "/";
     } catch (err: any) {
       setMessage(err.message ?? "Registration failed");
     } finally {
@@ -72,6 +73,13 @@ export default function RegisterPage() {
       </form>
 
       {message && <p className="auth-message">{message}</p>}
+
+      <div className="auth-link">
+        <p>Already have an account?</p>
+        <Link href="/login">
+          <button className="auth-secondary-button">Login</button>
+        </Link>
+      </div>
     </main>
   );
 }

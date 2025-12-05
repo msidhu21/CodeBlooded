@@ -5,10 +5,54 @@
   font-family: Inter, sans-serif;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
 .title {
   font-size: 28px;
   font-weight: 600;
-  margin-bottom: 25px;
+  margin: 0;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.backButton {
+  background: #6c757d;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.backButton:hover {
+  background: #5a6268;
+}
+
+.logoutButton {
+  background: #dc3545;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.logoutButton:hover {
+  background: #c82333;
 }
 
 .card {

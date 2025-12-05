@@ -17,7 +17,11 @@ class AuthUser(BaseModel):
     email: EmailStr
     name: str
     role: str
-    # pydantic v2 config: allow extra keys (e.g., picture/contact_*) and support ORM style if needed
+    picture: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_phone: Optional[str] = None
+    location: Optional[str] = None
+    # pydantic v2 config: allow extra keys and support ORM style if needed
     model_config = ConfigDict(from_attributes=True, extra="ignore")
 
 
@@ -66,6 +70,7 @@ class ProfileUpdate(BaseModel):
     picture: Optional[str] = None
     contact_email: Optional[EmailStr] = None
     contact_phone: Optional[str] = None
+    location: Optional[str] = None
 
 
 

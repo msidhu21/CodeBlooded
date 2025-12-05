@@ -13,6 +13,7 @@ EDITABLE_FIELDS = [
     "picture",
     "contact_email",
     "contact_phone",
+    "location",
 ]
 
 
@@ -48,13 +49,17 @@ class UserRepo:
         result = self.df[self.df["user_id"] == user_id]
         if result.empty:
             raise NotFound("User not found")
-        return result.iloc[0].to_dict()
+        user_dict = result.iloc[0].to_dict()
+        # Replace NaN values with None
+        return {k: (None if pd.isna(v) else v) for k, v in user_dict.items()}
 
     def by_email(self, email: str) -> Optional[dict]:
         result = self.df[self.df["email"] == email]
         if result.empty:
             return None
-        return result.iloc[0].to_dict()
+        user_dict = result.iloc[0].to_dict()
+        # Replace NaN values with None
+        return {k: (None if pd.isna(v) else v) for k, v in user_dict.items()}
 
     def create(self, email: str, password_hash: str, name: str = "", role: str = "user") -> dict:
         """Create a new user and add them to the CSV."""
@@ -79,6 +84,7 @@ class UserRepo:
                 "picture": "",
                 "contact_email": "",
                 "contact_phone": "",
+                "location": "",
             }
 
             # Add to dataframe

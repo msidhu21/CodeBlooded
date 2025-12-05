@@ -21,6 +21,7 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const [filters, setFilters] = useState<FilterState>({
     query: '',
@@ -38,6 +39,10 @@ export default function HomePage() {
   useEffect(() => {
     fetchCategories();
     performSearch(1); // Load all products by default
+    
+    // Check if user is logged in
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user);
   }, []);
 
   const fetchCategories = async () => {
@@ -187,63 +192,102 @@ export default function HomePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen transition-colors">
-      <header className="mb-8 pb-6 border-b-2 border-gray-300 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-4xl font-bold mb-2 dark:text-white">Product Catalog</h1>
-            <p className="text-gray-600 dark:text-gray-400">Search and discover products with advanced filtering</p>
-          </div>
-          <div className="flex gap-3 items-center">
-            <ThemeToggle />
-            <Link href="/login">
-              <button className="px-6 py-2 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors font-medium">
-                Login
-              </button>
-            </Link>
-            <Link href="/register">
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                Sign Up
-              </button>
-            </Link>
+    <div className="min-h-screen dark:bg-gray-900 transition-colors">
+      {/* Top Navigation Bar */}
+      <nav className="bg-blue-600 dark:bg-blue-800 shadow-lg sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between gap-4">
+            {/* Logo/Title */}
+            <div className="flex-shrink-0">
+              <h1 className="text-2xl font-bold text-white">Shopping Website</h1>
+            </div>
+            
+            {/* Search Bar */}
+            <div className="flex-1 max-w-2xl">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={filters.query}
+                  onChange={(e) => {
+                    const newFilters = { ...filters, query: e.target.value };
+                    setFilters(newFilters);
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch();
+                    }
+                  }}
+                  placeholder="Search products..."
+                  className="flex-1 px-4 py-2 rounded-lg border-2 border-transparent focus:outline-none focus:border-white dark:bg-gray-800 dark:text-white"
+                />
+                <button
+                  onClick={() => handleSearch()}
+                  disabled={isLoading}
+                  className="px-6 py-2 bg-white text-blue-600 dark:bg-gray-700 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors font-medium"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+            
+            {/* Right side buttons */}
+            <div className="flex gap-3 items-center flex-shrink-0">
+              <ThemeToggle />
+              {isLoggedIn ? (
+                <>
+                  <Link href="/wishlist">
+                    <button className="p-2 rounded-lg bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors" aria-label="Wishlist">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </button>
+                  </Link>
+                  <Link href="/profile">
+                    <button className="p-2 rounded-lg bg-white bg-opacity-20 hover:bg-opacity-30 transition-colors" aria-label="Profile">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <button className="px-4 py-2 text-white border-2 border-white rounded-lg hover:bg-white hover:text-blue-600 transition-colors font-medium">
+                      Login
+                    </button>
+                  </Link>
+                  <Link href="/register">
+                    <button className="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-colors font-medium">
+                      Sign Up
+                    </button>
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
         </div>
-        
-        {/* Search Bar */}
-        <div className="flex gap-4 mb-4">
-          <div className="flex-1">
-            <input
-              type="text"
-              value={filters.query}
-              onChange={(e) => {
-                const newFilters = { ...filters, query: e.target.value };
-                setFilters(newFilters);
-              }}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-              placeholder="Search by name, description, or category..."
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-lg"
-            />
+      </nav>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <header className="mb-8 pb-6 border-b-2 border-gray-300 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-3xl font-bold mb-2 dark:text-white">Product Catalog</h2>
+              <p className="text-gray-600 dark:text-gray-400">Browse and discover products with advanced filtering</p>
+            </div>
+            <div className="flex gap-3 items-center">
+              <SearchFilters
+                filters={filters}
+                onFiltersChange={setFilters}
+                onSearch={handleSearch}
+                categories={categories}
+                isLoading={isLoading}
+              />
+            </div>
           </div>
-          <button
-            onClick={() => handleSearch()}
-            disabled={isLoading}
-            className="btn btn-primary px-8"
-          >
-            Search
-          </button>
-          <SearchFilters
-            filters={filters}
-            onFiltersChange={setFilters}
-            onSearch={handleSearch}
-            categories={categories}
-            isLoading={isLoading}
-          />
-        </div>
-      </header>
+        </header>
       
       <div>
         {/* Active Filters Display */}
@@ -514,11 +558,12 @@ export default function HomePage() {
           )}
         </div>
 
-      <footer className="mt-12 pt-6 border-t-2 border-gray-300 text-center">
-        <Link href="/admin" className="btn inline-block">
-          Admin Dashboard
-        </Link>
-      </footer>
+        <footer className="mt-12 pt-6 border-t-2 border-gray-300 dark:border-gray-700 text-center">
+          <Link href="/admin/login" className="text-blue-600 dark:text-blue-400 hover:underline">
+            Admin Login
+          </Link>
+        </footer>
+      </div>
     </div>
   );
 }
