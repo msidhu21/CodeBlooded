@@ -24,10 +24,21 @@ def add_to_cart(product_id: str, x_user_id: str | None = Header(default=None), a
     request = CartItemAddRequest(user_id=user_id, product_id=product_id)
     return CartService.add_item(request)
 
-@router.get("", response_model=list[CartItemResponse])
+@router.get("")
 def get_cart(x_user_id: str | None = Header(default=None), authorization: str | None = Header(default=None)):
     user_id = get_user_id(x_user_id, authorization)
     return CartService.get_items(user_id)
+
+@router.get("/{product_id}/check")
+def check_cart(product_id: str, x_user_id: str | None = Header(default=None), authorization: str | None = Header(default=None)):
+    user_id = get_user_id(x_user_id, authorization)
+    items = CartService.get_items(user_id)
+    # Handle both dict and object responses
+    is_in_cart = any(
+        (item.product_id if hasattr(item, 'product_id') else item['product_id']) == product_id 
+        for item in items
+    )
+    return {"is_in_cart": is_in_cart}
 
 @router.delete("/remove")
 def remove_from_cart(product_id: str, x_user_id: str | None = Header(default=None), authorization: str | None = Header(default=None)):
