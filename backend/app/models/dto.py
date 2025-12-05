@@ -74,14 +74,11 @@ class ExportPayload(BaseModel):
     count: int
     items: List[ItemOut]
 
-
-# -------- Wishlist --------
-
-class WishlistItem(BaseModel):
-    user_id: int
+# -------- Cart --------
+class CartItemAddRequest(BaseModel):
+    user_id: str
     product_id: str
-    added_at: str
 
-class WishlistResponse(BaseModel):
-    products: List[dict]
-    count: int
+class CartItemResponse(BaseModel):
+    user_id: str
+    product_id: str
