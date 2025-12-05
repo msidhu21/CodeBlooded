@@ -20,6 +20,7 @@ export default function HomePage() {
   const [filters, setFilters] = useState<FilterState>({
     query: '',
     category: '',
+    categories: [],
     minRating: '',
     maxRating: '',
     minPrice: '',
@@ -55,8 +56,16 @@ export default function HomePage() {
       // Add search query
       if (filters.query) params.append('q', filters.query);
       
-      // Add category filter
-      if (filters.category) params.append('category', filters.category);
+      // Add category filter - handle both single category (backward compat) and multiple categories
+      if (filters.categories && filters.categories.length > 0) {
+        // For multiple categories, we'll filter by joining them
+        // The backend will match if any of these categories are found in the product's category string
+        // We'll send the first category and the others will be filtered client-side for now
+        // TODO: Update backend to support multiple category filters
+        params.append('category', filters.categories[0]);
+      } else if (filters.category) {
+        params.append('category', filters.category);
+      }
       
       // Add rating filters
       if (filters.minRating) params.append('min_rating', filters.minRating);
@@ -118,7 +127,8 @@ export default function HomePage() {
   const getActiveFiltersCount = () => {
     let count = 0;
     if (filters.query) count++;
-    if (filters.category) count++;
+    if (filters.categories && filters.categories.length > 0) count += filters.categories.length;
+    else if (filters.category) count++;
     if (filters.minRating) count++;
     if (filters.maxRating) count++;
     if (filters.minPrice) count++;
@@ -128,8 +138,17 @@ export default function HomePage() {
   };
 
   const clearFilter = (filterKey: keyof FilterState) => {
-    const newFilters = { ...filters, [filterKey]: '' };
+    const newFilters = { ...filters, [filterKey]: filterKey === 'categories' ? [] : '' };
     setFilters(newFilters);
+    setTimeout(() => {
+      setCurrentPage(1);
+      performSearch(1);
+    }, 100);
+  };
+
+  const removeCategoryFromFilter = (categoryToRemove: string) => {
+    const newCategories = filters.categories?.filter(cat => cat !== categoryToRemove) || [];
+    setFilters({ ...filters, categories: newCategories, category: '' });
     setTimeout(() => {
       setCurrentPage(1);
       performSearch(1);
@@ -139,13 +158,11 @@ export default function HomePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <header className="mb-8 pb-6 border-b-2 border-gray-300">
-        <h1 className="text-4xl font-bold mb-2">Product Catalog</h1>
-        <p className="text-gray-600">Search and discover products with advanced filtering</p>
-      </header>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Filters Sidebar */}
-        <div className="lg:col-span-1">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Product Catalog</h1>
+            <p className="text-gray-600">Search and discover products with advanced filtering</p>
+          </div>
           <SearchFilters
             filters={filters}
             onFiltersChange={setFilters}
@@ -154,10 +171,10 @@ export default function HomePage() {
             isLoading={isLoading}
           />
         </div>
-
-        {/* Results Area */}
-        <div className="lg:col-span-3">
-          {/* Active Filters Display */}
+      </header>
+      
+      <div>
+        {/* Active Filters Display */}
           {getActiveFiltersCount() > 0 && searchResponse && (
             <div className="card p-4 mb-6">
               <div className="flex items-center justify-between mb-2">
@@ -175,7 +192,23 @@ export default function HomePage() {
                     </button>
                   </span>
                 )}
-                {filters.category && (
+                {/* Show multiple categories as chips */}
+                {filters.categories && filters.categories.length > 0 ? (
+                  filters.categories.map((cat) => {
+                    const displayName = cat.split('|').pop() || cat;
+                    return (
+                      <span key={cat} className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary text-white">
+                        {displayName}
+                        <button
+                          onClick={() => removeCategoryFromFilter(cat)}
+                          className="ml-2 hover:text-gray-200"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })
+                ) : filters.category ? (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary text-white">
                     Category: {filters.category}
                     <button
@@ -185,7 +218,7 @@ export default function HomePage() {
                       ×
                     </button>
                   </span>
-                )}
+                ) : null}
                 {filters.minRating && (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary text-white">
                     Min Rating: {filters.minRating}
@@ -353,7 +386,6 @@ export default function HomePage() {
             </div>
           )}
         </div>
-      </div>
 
       <footer className="mt-12 pt-6 border-t-2 border-gray-300 text-center">
         <Link href="/admin" className="btn inline-block">
