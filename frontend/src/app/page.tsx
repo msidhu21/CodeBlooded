@@ -315,16 +315,63 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* No Results with Suggestions */}
-          {!isLoading && searchResponse && searchResponse.products.length === 0 && searchResponse.suggestions && (
-            <NoResultsSuggestions
-              originalQuery={searchResponse.suggestions.original_query}
-              similarCategories={searchResponse.suggestions.similar_categories}
-              popularProducts={searchResponse.suggestions.popular_products}
-              didYouMean={searchResponse.suggestions.did_you_mean}
-              onCategoryClick={handleCategoryClick}
-              onSuggestionClick={handleSuggestionClick}
-            />
+          {/* No Results Message */}
+          {!isLoading && searchResponse && searchResponse.products.length === 0 && (
+            <div className="card p-8 text-center">
+              <div className="mb-4">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">No products found</h3>
+              <p className="text-gray-600 mb-6">
+                {filters.query ? (
+                  <>We couldn't find any products matching "<strong>{filters.query}</strong>"</>
+                ) : (
+                  <>No products match your current filters</>
+                )}
+              </p>
+              <div className="space-y-4">
+                <p className="text-sm text-gray-500">Try:</p>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li>• Using different keywords</li>
+                  <li>• Checking your spelling</li>
+                  <li>• Using more general search terms</li>
+                  {(filters.categories.length > 0 || filters.min_rating || filters.min_price || filters.max_price || filters.min_discount) && (
+                    <li>• Removing some filters</li>
+                  )}
+                </ul>
+              </div>
+              {(filters.query || filters.categories.length > 0 || filters.min_rating) && (
+                <button
+                  onClick={() => {
+                    setFilters({
+                      query: '',
+                      category: '',
+                      categories: [],
+                      min_rating: undefined,
+                      max_rating: undefined,
+                      min_price: undefined,
+                      max_price: undefined,
+                      min_discount: undefined
+                    });
+                    performSearch(1, {
+                      query: '',
+                      category: '',
+                      categories: [],
+                      min_rating: undefined,
+                      max_rating: undefined,
+                      min_price: undefined,
+                      max_price: undefined,
+                      min_discount: undefined
+                    });
+                  }}
+                  className="btn mt-6"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
           )}
 
           {/* Results Grid */}

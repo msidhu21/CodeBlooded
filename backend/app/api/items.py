@@ -89,11 +89,6 @@ def search_products(
         }
     }
     
-    # Add suggestions if no results found and query was provided
-    if total_results == 0 and q:
-        suggestions = repo.suggest_alternatives(q)
-        response["suggestions"] = clean_nan_values(suggestions)
-    
     return response
 
 @router.get("/{product_id}")

@@ -76,18 +76,27 @@ class CSVRepository:
             # Combine matches with OR logic - product matches if found in any field
             filtered_df = filtered_df[name_match | desc_match | cat_match]
             
-            # Add relevance score for ranking (higher score = better match)
-            # Prioritize exact word matches over partial matches
-            filtered_df['relevance_score'] = (
-                name_exact_word.astype(int) * 10 +  # Exact word in name is most important
-                name_match.astype(int) * 3 +        # Any name match is important
-                cat_exact_word.astype(int) * 5 +    # Exact word in category
-                cat_match.astype(int) * 2 +         # Category matches are moderately important
-                desc_match.astype(int) * 1          # Description matches are less important
-            )
-            
-            # Sort by relevance score (highest first), then by rating
-            filtered_df = filtered_df.sort_values(['relevance_score', 'rating'], ascending=[False, False])
+            # Only add relevance scoring if we have matches
+            if len(filtered_df) > 0:
+                # Filter the boolean series to match the filtered dataframe indices
+                filtered_name_exact = name_exact_word[filtered_df.index]
+                filtered_name_match = name_match[filtered_df.index]
+                filtered_cat_exact = cat_exact_word[filtered_df.index]
+                filtered_cat_match = cat_match[filtered_df.index]
+                filtered_desc_match = desc_match[filtered_df.index]
+                
+                # Add relevance score for ranking (higher score = better match)
+                # Prioritize exact word matches over partial matches
+                filtered_df['relevance_score'] = (
+                    filtered_name_exact.astype(int) * 10 +  # Exact word in name is most important
+                    filtered_name_match.astype(int) * 3 +   # Any name match is important
+                    filtered_cat_exact.astype(int) * 5 +    # Exact word in category
+                    filtered_cat_match.astype(int) * 2 +    # Category matches are moderately important
+                    filtered_desc_match.astype(int) * 1     # Description matches are less important
+                )
+                
+                # Sort by relevance score (highest first), then by rating
+                filtered_df = filtered_df.sort_values(['relevance_score', 'rating'], ascending=[False, False])
         
         # Filter by category (exact or partial match)
         if category:
