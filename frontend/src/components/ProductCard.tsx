@@ -45,7 +45,7 @@ export default function ProductCard({ product, showDetails = true }: ProductCard
     }
   };
   return (
-    <div className="bg-white rounded-lg p-5 shadow-sm mb-5 h-full flex flex-col">
+    <div className="bg-white dark:bg-gray-800 rounded-lg p-5 shadow-sm mb-5 h-full flex flex-col transition-colors">
       {product.img_link && (
         <img
           src={product.img_link}
@@ -56,10 +56,10 @@ export default function ProductCard({ product, showDetails = true }: ProductCard
           }}
         />
       )}
-      <h3 className="mb-2.5 text-lg font-semibold">
+      <h3 className="mb-2.5 text-lg font-semibold dark:text-white">
         {product.product_name}
       </h3>
-      <div className="mb-2.5 text-gray-600 text-sm">
+      <div className="mb-2.5 text-gray-600 dark:text-gray-400 text-sm">
         <strong>Category:</strong> {product.category}
       </div>
       <div className="mb-2.5">
@@ -80,10 +80,10 @@ export default function ProductCard({ product, showDetails = true }: ProductCard
         )}
       </div>
       {product.rating && (
-        <div className="mb-4 text-sm">
+        <div className="mb-4 text-sm dark:text-gray-300">
           <strong>Rating:</strong> {product.rating}
           {product.rating_count && (
-            <span className="text-gray-600 ml-1">
+            <span className="text-gray-600 dark:text-gray-400 ml-1">
               ({product.rating_count} reviews)
             </span>
           )}
@@ -96,7 +96,7 @@ export default function ProductCard({ product, showDetails = true }: ProductCard
           className={`px-4 py-2 border rounded text-sm font-medium transition-colors ${
             isInWishlist 
               ? 'bg-red-500 text-white border-red-500 hover:bg-red-600' 
-              : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+              : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
           } ${loading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
         >
           {loading ? '...' : isInWishlist ? '❤️ Remove from Wishlist' : '🤍 Add to Wishlist'}

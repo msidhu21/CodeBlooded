@@ -6,9 +6,13 @@ import SearchFilters, { FilterState } from '@/components/SearchFilters';
 import NoResultsSuggestions from '@/components/NoResultsSuggestions';
 import ProductCard from '@/components/ProductCard';
 import RecommendedList from '@/components/RecommendedList';
+import ThemeToggle from '@/components/ThemeToggle';
 import Link from 'next/link';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
+// Disable static generation for this page
+export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
   const [searchResponse, setSearchResponse] = useState<SearchResponse | null>(null);
@@ -183,16 +187,17 @@ export default function HomePage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-8 pb-6 border-b-2 border-gray-300">
+    <div className="container mx-auto px-4 py-8 dark:bg-gray-900 min-h-screen transition-colors">
+      <header className="mb-8 pb-6 border-b-2 border-gray-300 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Product Catalog</h1>
-            <p className="text-gray-600">Search and discover products with advanced filtering</p>
+            <h1 className="text-4xl font-bold mb-2 dark:text-white">Product Catalog</h1>
+            <p className="text-gray-600 dark:text-gray-400">Search and discover products with advanced filtering</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
+            <ThemeToggle />
             <Link href="/login">
-              <button className="px-6 py-2 text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+              <button className="px-6 py-2 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors font-medium">
                 Login
               </button>
             </Link>
@@ -220,7 +225,7 @@ export default function HomePage() {
                 }
               }}
               placeholder="Search by name, description, or category..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-lg"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-lg"
             />
           </div>
           <button
@@ -348,15 +353,15 @@ export default function HomePage() {
           {/* Browse All Products Heading */}
           {searchResponse && searchResponse.products.length > 0 && !filters.query && getActiveFiltersCount() === 0 && (
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Browse All Products</h2>
-              <p className="text-gray-600 mt-1">Explore our complete catalog of {searchResponse.pagination.total_results} products</p>
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Browse All Products</h2>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">Explore our complete catalog of {searchResponse.pagination.total_results} products</p>
             </div>
           )}
 
           {/* Search Metadata */}
           {searchResponse && searchResponse.products.length > 0 && (
             <div className="card p-4 mb-6">
-              <div className="flex items-center justify-between text-sm text-gray-600">
+              <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                 <span>
                   Showing {searchResponse.pagination.total_results} results
                   {searchResponse.meta.search_time_ms && (
@@ -366,7 +371,7 @@ export default function HomePage() {
                   )}
                 </span>
                 {filters.compact && (
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                  <span className="text-xs bg-gray-100 dark:bg-gray-700 dark:text-gray-300 px-2 py-1 rounded">
                     Compact View
                   </span>
                 )}
