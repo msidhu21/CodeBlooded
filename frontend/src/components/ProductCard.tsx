@@ -9,10 +9,6 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, showDetails = true }: ProductCardProps) {
-  const isHighlighted = (field: string) => {
-    return product.highlighted_fields?.includes(field);
-  };
-
   return (
     <div className="bg-white rounded-lg p-5 shadow-sm mb-5 h-full flex flex-col">
       {product.img_link && (
@@ -25,10 +21,10 @@ export default function ProductCard({ product, showDetails = true }: ProductCard
           }}
         />
       )}
-      <h3 className={`mb-2.5 text-lg font-semibold ${isHighlighted('product_name') ? 'bg-yellow-100 px-1 rounded' : ''}`}>
+      <h3 className="mb-2.5 text-lg font-semibold">
         {product.product_name}
       </h3>
-      <div className={`mb-2.5 text-gray-600 text-sm ${isHighlighted('category') ? 'bg-yellow-100 px-1 rounded' : ''}`}>
+      <div className="mb-2.5 text-gray-600 text-sm">
         <strong>Category:</strong> {product.category}
       </div>
       <div className="mb-2.5">
