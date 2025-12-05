@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import ClientThemeProvider from '@/components/ClientThemeProvider'
 
 export const metadata: Metadata = {
   title: 'COSC 310 - Product Catalog',
@@ -13,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ClientThemeProvider>
+          {children}
+        </ClientThemeProvider>
+      </body>
     </html>
   )
 }
