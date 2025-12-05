@@ -85,6 +85,18 @@ class CSVRepository:
                 filtered_cat_match = cat_match[filtered_df.index]
                 filtered_desc_match = desc_match[filtered_df.index]
                 
+                # Detect if it's a main product category (Laptops, Smartphones, Tablets, etc) vs accessories
+                # Check if category contains main product keywords
+                main_product_keywords = r'\|(Laptops|Smartphones|Tablets|Televisions|Cameras|Monitors|Desktops|SmartWatches)\|'
+                is_main_product = filtered_df['category'].str.contains(main_product_keywords, case=False, na=False, regex=True)
+                
+                # Detect accessory subcategories
+                accessory_subcategories = r'LaptopAccessories|MobileAccessories|Chargers|Cables|Bags|Sleeves|Covers|Cases|Stands|Mounts|Adapters'
+                is_accessory = filtered_df['category'].str.contains(accessory_subcategories, case=False, na=False, regex=True)
+                
+                # Boost main products over accessories
+                product_boost = (is_main_product & ~is_accessory).astype(int) * 5  # +5 points for main products
+                
                 # Add relevance score for ranking (higher score = better match)
                 # Prioritize exact word matches over partial matches
                 filtered_df['relevance_score'] = (
@@ -92,7 +104,8 @@ class CSVRepository:
                     filtered_name_match.astype(int) * 3 +   # Any name match is important
                     filtered_cat_exact.astype(int) * 5 +    # Exact word in category
                     filtered_cat_match.astype(int) * 2 +    # Category matches are moderately important
-                    filtered_desc_match.astype(int) * 1     # Description matches are less important
+                    filtered_desc_match.astype(int) * 1 +   # Description matches are less important
+                    product_boost                           # Boost actual products over accessories
                 )
                 
                 # Sort by relevance score (highest first), then by rating
