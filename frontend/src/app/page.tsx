@@ -18,16 +18,15 @@ export default function BrowsePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(
-    searchParams.get('category') || null
-  );
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<PlacePrediction | null>(null);
   const [pagination, setPagination] = useState({
     page: 1,
     total_pages: 1,
     total_results: 0,
   });
+  const [mounted, setMounted] = useState(false);
 
   const performSearch = async (query: string, category: string | null, page: number = 1) => {
     setLoading(true);
@@ -48,7 +47,6 @@ export default function BrowsePage() {
         total_results: response.pagination.total_results,
       });
       
-      // Update URL
       const params = new URLSearchParams();
       if (query) params.set('q', query);
       if (category) params.set('category', category);
@@ -63,7 +61,16 @@ export default function BrowsePage() {
   };
 
   useEffect(() => {
-    performSearch(searchQuery, selectedCategory, 1);
+    setMounted(true);
+    const q = searchParams.get('q') || '';
+    const cat = searchParams.get('category') || null;
+    setSearchQuery(q);
+    setSelectedCategory(cat);
+    if (q || cat) {
+      performSearch(q, cat, 1);
+    } else {
+      performSearch('', null, 1);
+    }
   }, []);
 
   const handleSearch = (query: string) => {
@@ -86,6 +93,14 @@ export default function BrowsePage() {
     performSearch(searchQuery, selectedCategory, newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  if (!mounted) {
+    return (
+      <div className="container">
+        <div className="loading">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
@@ -175,7 +190,10 @@ export default function BrowsePage() {
         </>
       )}
 
-      <footer style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #ddd', textAlign: 'center' }}>
+      <footer style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #ddd', textAlign: 'center', display: 'flex', gap: '15px', justifyContent: 'center' }}>
+        <Link href="/wishlist" className="btn btn-secondary" style={{ display: 'inline-block' }}>
+          My Wishlist
+        </Link>
         <Link href="/admin" className="btn btn-secondary" style={{ display: 'inline-block' }}>
           Admin Dashboard
         </Link>
