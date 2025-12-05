@@ -6,12 +6,12 @@ from app.core.errors import NotFound
 
 
 class BoomRepo:
-    def update_profile(self, user_id, *, name=None, picture=None, contact=None):
+    def update_profile(self, user_id, **kwargs):
         raise RuntimeError("boom")
 
 
 class NotFoundRepo:
-    def update_profile(self, user_id, *, name=None, picture=None, contact=None):
+    def update_profile(self, user_id, **kwargs):
         raise NotFound("user not found")
 
 

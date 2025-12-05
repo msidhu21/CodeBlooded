@@ -61,8 +61,12 @@ class ContactInfo(BaseModel):
 
 class ProfileUpdate(BaseModel):
     name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    role: Optional[str] = None
     picture: Optional[str] = None
-    contact: Optional[ContactInfo] = None
+    contact_email: Optional[EmailStr] = None
+    contact_phone: Optional[str] = None
+
 
 
 # -------- Export --------

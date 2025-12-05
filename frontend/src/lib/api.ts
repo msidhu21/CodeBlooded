@@ -7,6 +7,18 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
+  private getUserId(): string | null {
+    if (typeof window === 'undefined') return null;
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+    try {
+      const user = JSON.parse(userStr);
+      return user.id?.toString() || null;
+    } catch {
+      return null;
+    }
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -111,23 +123,56 @@ class ApiClient {
   }
 
   async getWishlist() {
-    return this.request<{ products: any[]; count: number }>('/wishlist');
+    const userId = this.getUserId();
+    return this.request<{ products: any[]; count: number }>('/wishlist', {
+      headers: userId ? { 'X-User-Id': userId } : {},
+    });
   }
 
   async addToWishlist(productId: string) {
+    const userId = this.getUserId();
     return this.request<{ message: string; item: any }>(`/wishlist/${productId}`, {
       method: 'POST',
+      headers: userId ? { 'X-User-Id': userId } : {},
     });
   }
 
   async removeFromWishlist(productId: string) {
+    const userId = this.getUserId();
     return this.request<{ message: string }>(`/wishlist/${productId}`, {
       method: 'DELETE',
+      headers: userId ? { 'X-User-Id': userId } : {},
     });
   }
 
   async checkWishlist(productId: string) {
-    return this.request<{ is_in_wishlist: boolean }>(`/wishlist/${productId}/check`);
+    const userId = this.getUserId();
+    return this.request<{ is_in_wishlist: boolean }>(`/wishlist/${productId}/check`, {
+      headers: userId ? { 'X-User-Id': userId } : {},
+    });
+  }
+
+  async getCart() {
+    const userId = this.getUserId();
+    return this.request<any[]>('/cart', {
+      headers: userId ? { 'X-User-Id': userId } : {},
+    });
+  }
+
+  async addToCart(productId: string) {
+    const userId = this.getUserId();
+    return this.request<{ user_id: string; product_id: string }>(`/cart/add?product_id=${productId}`, {
+      method: 'POST',
+      headers: userId ? { 'X-User-Id': userId } : {},
+    });
+  }
+
+  async removeFromCart(productId: string) {
+    const userId = this.getUserId();
+    return this.request<{ message: string }>(`/cart/remove?product_id=${productId}`, {
+      method: 'DELETE',
+      headers: userId ? { 'X-User-Id': userId } : {},
+    });
   }
 }
 

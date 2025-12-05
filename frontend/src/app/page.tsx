@@ -190,6 +190,18 @@ export default function HomePage() {
             <h1 className="text-4xl font-bold mb-2">Product Catalog</h1>
             <p className="text-gray-600">Search and discover products with advanced filtering</p>
           </div>
+          <div className="flex gap-3">
+            <Link href="/login">
+              <button className="px-6 py-2 text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium">
+                Login
+              </button>
+            </Link>
+            <Link href="/register">
+              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                Sign Up
+              </button>
+            </Link>
+          </div>
         </div>
         
         {/* Search Bar */}

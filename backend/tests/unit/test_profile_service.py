@@ -12,16 +12,13 @@ class StubRepo:
             "role": "admin",
         }
 
-    def update_profile(self, user_id, *, name=None, picture=None, contact=None):
-        self.last_args = (user_id, name, picture, contact)
+    def update_profile(self, user_id, **kwargs):
+        self.last_args = (user_id, kwargs)
         updated = dict(self.user)
-        if name is not None:
-            updated["name"] = name
-        if picture is not None:
-            updated["picture"] = picture
-        if contact is not None:
-            updated["contact_email"] = contact.get("email")
-            updated["contact_phone"] = contact.get("phone")
+        # Update any fields that were passed
+        for key, value in kwargs.items():
+            if value is not None:
+                updated[key] = value
         return updated
 
 @pytest.fixture
@@ -35,14 +32,25 @@ def test_update_partial_fields_calls_repo_with_only_those_fields(svc):
     req = ProfileUpdate(name="New Name")
     out = svc.update(1, req)
     assert isinstance(out, AuthUser)
-    assert svc.repo.last_args == (1, "New Name", None, None)
+    user_id, kwargs = svc.repo.last_args
+    assert user_id == 1
+    assert kwargs.get("name") == "New Name"
+    # Other fields should be None
+    assert kwargs.get("email") is None
+    assert kwargs.get("picture") is None
 
 def test_update_all_fields_maps_contact_dict(svc):
     req = ProfileUpdate(
         name="Neo",
         picture="p.png",
-        contact=ContactInfo(email="a@b.com", phone="555"),
+        contact_email="a@b.com",
+        contact_phone="555",
     )
     out = svc.update(1, req)
     assert out.name == "Neo"
-    assert svc.repo.last_args == (1, "Neo", "p.png", {"email": "a@b.com", "phone": "555"})
+    user_id, kwargs = svc.repo.last_args
+    assert user_id == 1
+    assert kwargs.get("name") == "Neo"
+    assert kwargs.get("picture") == "p.png"
+    assert kwargs.get("contact_email") == "a@b.com"
+    assert kwargs.get("contact_phone") == "555"

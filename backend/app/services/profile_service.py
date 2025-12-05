@@ -1,4 +1,3 @@
-from typing import Dict, Any
 from ..repos.user_repo import UserRepo
 from ..models.dto import ProfileUpdate, AuthUser
 
@@ -6,16 +5,18 @@ class ProfileService:
     def __init__(self):
         self.repo = UserRepo()
 
-    def update(self, user_id: int, req: ProfileUpdate) -> AuthUser:
-        """Apply partial updates (name, picture, contact) and return AuthUser."""
-        contact_dict: Dict[str, Any] | None = None
-        if req.contact is not None:
-            contact_dict = req.contact.dict()
+    def get(self, user_id: int) -> AuthUser:
+        user = self.repo.by_id(user_id)
+        return AuthUser(**user)
 
+    def update(self, user_id: int, req: ProfileUpdate) -> AuthUser:
         updated = self.repo.update_profile(
             user_id,
             name=req.name,
+            email=req.email,
+            role=req.role,
             picture=req.picture,
-            contact=contact_dict,
+            contact_email=req.contact_email,
+            contact_phone=req.contact_phone,
         )
-        return AuthUser.model_validate(updated)
+        return AuthUser(**updated)

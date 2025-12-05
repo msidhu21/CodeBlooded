@@ -1,9 +1,17 @@
-user_id,email,password_hash,name,role
-1,admin@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Admin User,admin
-2,demo@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Demo User,user
-3,test_1d3b8910062b421f910f05959e3fecf6@example.com,$2b$12$bkhwevdXXbP9PGePfAAZve1/cWZQNCRH84khgux4Jr.yxZz0IRQ5.,Pytest User,user
-4,duplicate_6d6c57c5866c4d788db96ebf4e85d9fe@example.com,$2b$12$IAM5zyarmG9nwd//3Hg6XO5KU3ejLtTQKyRaHWVx2/Fp/cb1lU5qm,First User,user
-5,test_640a288801004aacbd56070e58195541@example.com,$2b$12$dAg9jFq2PxqIHU.qD1/x3eHg8dc7mC6ItFdmDfNtcqi1Qk4rfibBK,Pytest User,user
-6,duplicate_e15a05a176574f1bb3704328e287c7f4@example.com,$2b$12$sAE3X8do.Hth3yLCt9iTyefTUexLbHGmxmnoxI1e/7ggGHxQGxdJ2,First User,user
-7,test_86dd08f623f44cd1ac97652e2d2c8592@example.com,$2b$12$tjPMHJWysjokFVrV.XKVsui2VvC0PNWHYoHBExxfTXH6redkEM9XG,Pytest User,user
-8,duplicate_c57d890f878446719378d581466cf3fb@example.com,$2b$12$vEUiQC0sORnHQDrfq.0YwOoOJZXIeQlLa5oRYF7GPW/D0kPv7JGsa,First User,user
+user_id,email,password_hash,name,role,picture,contact_email,contact_phone
+1,admin@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Admin User,admin,https://static.generated.photos/vue-static/face-generator/landing/wall/14.jpg,nan,nan
+2,demo@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Demo User,user,nan,nan,nan
+3,test@cosc310.ca,$2b$12$CvvneImJrECvwfZqTSNH2eBHnwD5Xf6V6TKwZb0ZgDHtu8uKP72h.,Test User,user,nan,nan,nan
+4,newuser@example.com,$2b$12$ciSwBNHqKlekI/lFgQd8F.K2HTeDMDrDsqS9is4ZFzN8VfYEocjXi,Test User,user,nan,nan,nan
+5,test_befa060d808d47f083b8cb96dd7ce969@example.com,$2b$12$7EvaUfNyDlTfdXxGX4n67.QFkDelAtjUjS5vjhs0lTThXQ0bmGdQu,Pytest User,user,nan,nan,nan
+6,test_b360871214d54baf87d8248f1e168946@example.com,$2b$12$IVDDuA7Dtn/NIeTFITxoHu.A48bp31zBqoYwALg8fBs8MfguGh1ae,Pytest User,user,nan,nan,nan
+7,duplicate_fc193a2b5bfe4307a75f6ae7fdd48bad@example.com,$2b$12$xJuqMRTm2RbEiy394qsuMuzx4vdTD4xZqrnuHGa3WcWNbLd3mweR2,First User,user,nan,nan,nan
+8,test_885c95b85ed048308f5c9f9df43f0ffd@example.com,$2b$12$Oy4B.3fZCWP2aAbTeAswoeWUNSzf1nKoWgwI03LFsm0zjgldT8TB.,Pytest User,user,nan,nan,nan
+9,duplicate_be621700507049f086bb55717f01de86@example.com,$2b$12$c4VSYGICrhW4/4m9vS.pDe.nqO.PdDnrWCA6YS78hTNahI9EuikCG,First User,user,nan,nan,nan
+10,test_654b058b4202474caa29cd36dc79db69@example.com,$2b$12$UG6siFc6guiWr1HiI4TfouVnbHRVt6Yvvuugqq8EPlZSbI17B3d.O,Pytest User,user,nan,nan,nan
+11,duplicate_721d882502184bba8a7c15e8f99c75a4@example.com,$2b$12$dBFabPi.TgehFe4RWaWLTu5bqt.EML3pNpsMfQ9s/9/jvya7UeCm2,First User,user,nan,nan,nan
+12,test_3712b4738b41420c87a6018e9ef81d20@example.com,$2b$12$RnycM1smXx5GPVxcQ2xvx.3MU9dUkoWCAAJbVoavJ818sdv9qE7fW,Pytest User,user,nan,nan,nan
+13,duplicate_5037aeef3c674024921bd134cd591275@example.com,$2b$12$cxg5lRJLtY5PZOFlJbizv.YSyDQNuD1Uz4shA9ip0a1xSXsVEJDAO,First User,user,nan,nan,nan
+14,test_aa88db3c593b43d98e5db319f8ed5cbe@example.com,$2b$12$kR9hT.SDhBm/kDzu1oPIseUchbvLA79KOoRsyKHnIIGi4lB5ziUd.,Pytest User,user,nan,nan,nan
+15,duplicate_c6fb65fada284f82adafe43f8994a8dc@example.com,$2b$12$tpeuBqAkmQMW1nYFACUlCujNWsP6H3PK8pgGiFaueJF5YAdceQLiG,First User,user,nan,nan,nan
+16,test_bf903ade@example.com,$2b$12$YUZzNooaLM1JF/xfTHpHl.bifIEB.Z5P0ivzvp6yK3qc0dbjRAUQW,Test User,user,,,
