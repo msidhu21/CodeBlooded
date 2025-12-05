@@ -1,3 +1,9 @@
 user_id,email,password_hash,name,role
 1,admin@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Admin User,admin
 2,demo@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Demo User,user
+3,test_1d3b8910062b421f910f05959e3fecf6@example.com,$2b$12$bkhwevdXXbP9PGePfAAZve1/cWZQNCRH84khgux4Jr.yxZz0IRQ5.,Pytest User,user
+4,duplicate_6d6c57c5866c4d788db96ebf4e85d9fe@example.com,$2b$12$IAM5zyarmG9nwd//3Hg6XO5KU3ejLtTQKyRaHWVx2/Fp/cb1lU5qm,First User,user
+5,test_640a288801004aacbd56070e58195541@example.com,$2b$12$dAg9jFq2PxqIHU.qD1/x3eHg8dc7mC6ItFdmDfNtcqi1Qk4rfibBK,Pytest User,user
+6,duplicate_e15a05a176574f1bb3704328e287c7f4@example.com,$2b$12$sAE3X8do.Hth3yLCt9iTyefTUexLbHGmxmnoxI1e/7ggGHxQGxdJ2,First User,user
+7,test_86dd08f623f44cd1ac97652e2d2c8592@example.com,$2b$12$tjPMHJWysjokFVrV.XKVsui2VvC0PNWHYoHBExxfTXH6redkEM9XG,Pytest User,user
+8,duplicate_c57d890f878446719378d581466cf3fb@example.com,$2b$12$vEUiQC0sORnHQDrfq.0YwOoOJZXIeQlLa5oRYF7GPW/D0kPv7JGsa,First User,user
