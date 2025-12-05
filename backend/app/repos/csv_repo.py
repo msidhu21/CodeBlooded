@@ -52,7 +52,7 @@ class CSVRepository:
                        limit: int = 100,
                        offset: int = 0,
                        return_total: bool = False) -> List[dict] | tuple[List[dict], int]:
-        """Search products with multiple filters - searches across name, description, and category
+        """Search products with filters - searches across name, description, and category
         
         Args:
             return_total: If True, returns (results, total_count) tuple
@@ -61,31 +61,33 @@ class CSVRepository:
         
         # Enhanced text search across multiple fields
         if query:
+            import re
+            
             # Search in product name, description (about_product), and category
-            # Handle NaN values by filling with empty string
-            name_match = filtered_df['product_name'].fillna('').str.contains(query, case=False, na=False)
-            desc_match = filtered_df['about_product'].fillna('').str.contains(query, case=False, na=False)
-            cat_match = filtered_df['category'].fillna('').str.contains(query, case=False, na=False)
+            name_match = filtered_df['product_name'].str.contains(query, case=False, na=False)
+            desc_match = filtered_df['about_product'].str.contains(query, case=False, na=False)
+            cat_match = filtered_df['category'].str.contains(query, case=False, na=False)
+            
+            # Check for exact word matches (e.g., "TV" as a whole word, not just "TV" in "Television")
+            word_boundary_pattern = r'\b' + re.escape(query) + r'\b'
+            name_exact_word = filtered_df['product_name'].str.contains(word_boundary_pattern, case=False, na=False, regex=True)
+            cat_exact_word = filtered_df['category'].str.contains(word_boundary_pattern, case=False, na=False, regex=True)
             
             # Combine matches with OR logic - product matches if found in any field
-            text_match = name_match | desc_match | cat_match
-            filtered_df = filtered_df[text_match]
+            filtered_df = filtered_df[name_match | desc_match | cat_match]
             
             # Add relevance score for ranking (higher score = better match)
-            if len(filtered_df) > 0:
-                # Recalculate matches for the filtered dataframe
-                filtered_name_match = filtered_df['product_name'].fillna('').str.contains(query, case=False, na=False)
-                filtered_desc_match = filtered_df['about_product'].fillna('').str.contains(query, case=False, na=False)
-                filtered_cat_match = filtered_df['category'].fillna('').str.contains(query, case=False, na=False)
-                
-                filtered_df['relevance_score'] = (
-                    filtered_name_match.astype(int) * 3 +  # Name matches are most important
-                    filtered_desc_match.astype(int) * 1 +  # Description matches are less important
-                    filtered_cat_match.astype(int) * 2      # Category matches are moderately important
-                )
-                
-                # Sort by relevance score (highest first)
-                filtered_df = filtered_df.sort_values('relevance_score', ascending=False)
+            # Prioritize exact word matches over partial matches
+            filtered_df['relevance_score'] = (
+                name_exact_word.astype(int) * 10 +  # Exact word in name is most important
+                name_match.astype(int) * 3 +        # Any name match is important
+                cat_exact_word.astype(int) * 5 +    # Exact word in category
+                cat_match.astype(int) * 2 +         # Category matches are moderately important
+                desc_match.astype(int) * 1          # Description matches are less important
+            )
+            
+            # Sort by relevance score (highest first), then by rating
+            filtered_df = filtered_df.sort_values(['relevance_score', 'rating'], ascending=[False, False])
         
         # Filter by category (exact or partial match)
         if category:
@@ -95,10 +97,7 @@ class CSVRepository:
         
         # Filter by minimum rating
         if min_rating is not None:
-            # Convert rating to float, handling errors
-            filtered_df['rating_float'] = pd.to_numeric(filtered_df['rating'], errors='coerce')
-            filtered_df = filtered_df[filtered_df['rating_float'] >= min_rating]
-            filtered_df = filtered_df.drop(columns=['rating_float'])
+            filtered_df = filtered_df[filtered_df['rating'] >= min_rating]
         
         # Filter by maximum rating
         if max_rating is not None:
@@ -108,21 +107,16 @@ class CSVRepository:
         if min_price is not None or max_price is not None:
             # Clean price string and convert to float
             filtered_df['price_clean'] = filtered_df['discounted_price'].str.replace('₹', '').str.replace(',', '').astype(float)
-            
             if min_price is not None:
                 filtered_df = filtered_df[filtered_df['price_clean'] >= min_price]
-            
             if max_price is not None:
                 filtered_df = filtered_df[filtered_df['price_clean'] <= max_price]
-            
-            filtered_df = filtered_df.drop(columns=['price_clean'])
         
-        # Filter by minimum discount percentage
+        # Filter by minimum discount
         if min_discount is not None:
             # Clean discount string and convert to float
             filtered_df['discount_clean'] = filtered_df['discount_percentage'].str.replace('%', '').astype(float)
             filtered_df = filtered_df[filtered_df['discount_clean'] >= min_discount]
-            filtered_df = filtered_df.drop(columns=['discount_clean'])
         
         # Get total count before pagination
         total_count = len(filtered_df)
@@ -131,7 +125,7 @@ class CSVRepository:
         paginated_df = filtered_df.iloc[offset:offset+limit]
         
         # Remove temporary columns before returning
-        columns_to_drop = ['relevance_score', 'price_clean', 'discount_clean']
+        columns_to_drop = ['relevance_score', 'price_clean']
         paginated_df = paginated_df.drop(columns=[col for col in columns_to_drop if col in paginated_df.columns], errors='ignore')
         
         results = paginated_df.to_dict('records')
@@ -188,116 +182,6 @@ class CSVRepository:
             formatted_products.append(formatted)
         
         return formatted_products
-    
-    def get_popular_products(self, limit: int = 10) -> List[dict]:
-        """Get popular products based on rating count
-        
-        Args:
-            limit: Maximum number of products to return
-            
-        Returns:
-            List of popular products sorted by rating count
-        """
-        # Convert rating_count to numeric, handling errors
-        df_copy = self.df.copy()
-        df_copy['rating_count_numeric'] = pd.to_numeric(
-            df_copy['rating_count'].astype(str).str.replace(',', ''),
-            errors='coerce'
-        )
-        
-        # Sort by rating count and get top products
-        popular = df_copy.nlargest(limit, 'rating_count_numeric')
-        return popular.to_dict('records')
-    
-    def get_similar_categories(self, query: str, limit: int = 5) -> List[str]:
-        """Get categories that partially match the query
-        
-        Args:
-            query: Search term to match against categories
-            limit: Maximum number of categories to return
-            
-        Returns:
-            List of matching category names
-        """
-        if not query:
-            return []
-        
-        categories = self.df['category'].unique()
-        matching = []
-        
-        for category in categories:
-            if category and query.lower() in str(category).lower():
-                matching.append(category)
-        
-        return matching[:limit]
-    
-    def suggest_alternatives(self, query: str) -> dict:
-        """Provide alternative suggestions when no results found
-        
-        Args:
-            query: The original search query
-            
-        Returns:
-            Dictionary with suggestions including similar categories and popular products
-        """
-        suggestions = {
-            'original_query': query,
-            'similar_categories': [],
-            'popular_products': [],
-            'did_you_mean': []
-        }
-        
-        # Get similar categories
-        suggestions['similar_categories'] = self.get_similar_categories(query, limit=5)
-        
-        # Get popular products as fallback
-        popular = self.get_popular_products(limit=5)
-        suggestions['popular_products'] = self.format_for_display(popular, compact=True)
-        
-        # Simple did-you-mean based on common terms in product names
-        if query:
-            common_terms = self._get_common_search_terms()
-            query_lower = query.lower()
-            
-            for term in common_terms:
-                if term != query_lower and (
-                    query_lower in term or 
-                    term in query_lower or
-                    self._similar_strings(query_lower, term)
-                ):
-                    suggestions['did_you_mean'].append(term)
-                    if len(suggestions['did_you_mean']) >= 3:
-                        break
-        
-        return suggestions
-    
-    def _get_common_search_terms(self) -> List[str]:
-        """Extract common terms from product names for suggestions"""
-        # Get all product names
-        names = self.df['product_name'].dropna().astype(str)
-        
-        # Extract common words (longer than 3 characters)
-        terms = set()
-        for name in names:
-            words = name.lower().split()
-            for word in words:
-                # Remove common words and keep meaningful terms
-                if len(word) > 3 and word not in ['with', 'from', 'this', 'that', 'pack']:
-                    terms.add(word)
-        
-        return sorted(list(terms))[:100]  # Return top 100 common terms
-    
-    def _similar_strings(self, s1: str, s2: str) -> bool:
-        """Simple string similarity check"""
-        # Check if strings are similar (simple Levenshtein-like check)
-        if abs(len(s1) - len(s2)) > 2:
-            return False
-        
-        # Count matching characters
-        matches = sum(c1 == c2 for c1, c2 in zip(s1, s2))
-        similarity = matches / max(len(s1), len(s2))
-        
-        return similarity > 0.7
     
     def get_related_products(self, product_id: str, limit: int = 4) -> List[dict]:
         """Get related products based on category"""
