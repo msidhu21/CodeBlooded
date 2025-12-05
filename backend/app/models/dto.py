@@ -73,3 +73,12 @@ class ExportSelectionRequest(BaseModel):
 class ExportPayload(BaseModel):
     count: int
     items: List[ItemOut]
+
+# -------- Cart --------
+class CartItemAddRequest(BaseModel):
+    user_id: str
+    product_id: str
+
+class CartItemResponse(BaseModel):
+    user_id: str
+    product_id: str

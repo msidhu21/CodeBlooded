@@ -1,1 +1,1 @@
-from . import auth, items, profile, admin, export
+from . import auth, items, profile, admin, export, wishlist
