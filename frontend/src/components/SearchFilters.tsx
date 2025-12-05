@@ -21,7 +21,7 @@ export interface FilterState {
 interface SearchFiltersProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
-  onSearch: () => void;
+  onSearch: (filters?: FilterState) => void;
   categories: string[];
   isLoading?: boolean;
 }
@@ -106,7 +106,7 @@ export default function SearchFilters({
 
   const handleApplyFilters = () => {
     onFiltersChange(localFilters);
-    onSearch();
+    onSearch(localFilters);
     setIsOpen(false);
   };
 
@@ -124,7 +124,7 @@ export default function SearchFilters({
     };
     setLocalFilters(resetFilters);
     onFiltersChange(resetFilters);
-    onSearch();
+    onSearch(resetFilters);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

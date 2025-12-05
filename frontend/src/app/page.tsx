@@ -105,9 +105,9 @@ export default function HomePage() {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = (customFilters?: FilterState) => {
     setCurrentPage(1);
-    performSearch(1);
+    performSearch(1, customFilters);
   };
 
   const handlePageChange = (newPage: number) => {
