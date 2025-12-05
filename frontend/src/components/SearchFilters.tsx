@@ -173,23 +173,6 @@ export default function SearchFilters({
             </button>
           </div>
 
-      {/* Search Input */}
-      <div className="mb-4">
-        <label htmlFor="search" className="block text-sm font-medium mb-2">
-          Search Products
-        </label>
-        <input
-          id="search"
-          type="text"
-          value={localFilters.query}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('query', e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Search by name, description, or category..."
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-          disabled={isLoading}
-        />
-      </div>
-
       {/* Hierarchical Category Filter */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-2">

@@ -189,6 +189,34 @@ export default function HomePage() {
             <h1 className="text-4xl font-bold mb-2">Product Catalog</h1>
             <p className="text-gray-600">Search and discover products with advanced filtering</p>
           </div>
+        </div>
+        
+        {/* Search Bar */}
+        <div className="flex gap-4 mb-4">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={filters.query}
+              onChange={(e) => {
+                const newFilters = { ...filters, query: e.target.value };
+                setFilters(newFilters);
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+              placeholder="Search by name, description, or category..."
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-lg"
+            />
+          </div>
+          <button
+            onClick={() => handleSearch()}
+            disabled={isLoading}
+            className="btn btn-primary px-8"
+          >
+            Search
+          </button>
           <SearchFilters
             filters={filters}
             onFiltersChange={setFilters}
