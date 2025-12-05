@@ -3,13 +3,19 @@ __pycache__/
 .venv/
 .env
 *.db
-.evidence/
-evidence/**
-!evidence/coverage.xml
 .vscode/
 .idea/
 .coverage
 .pytest_cache/
 htmlcov/
 
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env*.local
+frontend/.env
+frontend/.vercel
+frontend/*.tsbuildinfo
+frontend/next-env.d.ts
 

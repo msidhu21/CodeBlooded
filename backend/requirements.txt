@@ -1,0 +1,16 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+pydantic[email]==2.7.4
+sqlalchemy       
+httpx==0.27.2   
+pytest
+pytest-cov
+python-multipart
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+pandas==2.2.2
+pyjwt
+python-dotenv==1.0.0
+python-jose
+
+

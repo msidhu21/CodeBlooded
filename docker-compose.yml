@@ -7,6 +7,27 @@ services:
       - "8000:8000"
     volumes:
       - ./backend/cosc310.db:/app/backend/cosc310.db
+      - ./backend/data:/app/backend/data
     environment:
       - PYTHONUNBUFFERED=1
+      - GOOGLE_PLACES_API_KEY=${GOOGLE_PLACES_API_KEY:-}
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 

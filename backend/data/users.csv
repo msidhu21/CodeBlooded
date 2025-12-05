@@ -1,0 +1,35 @@
+user_id,email,password_hash,name,role,picture,contact_email,contact_phone,location
+nan,location,nan,nan,nan,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+2.0,demo@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Demo User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+3.0,test@cosc310.ca,$2b$12$CvvneImJrECvwfZqTSNH2eBHnwD5Xf6V6TKwZb0ZgDHtu8uKP72h.,Test User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+4.0,newuser@example.com,$2b$12$ciSwBNHqKlekI/lFgQd8F.K2HTeDMDrDsqS9is4ZFzN8VfYEocjXi,Test User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+5.0,test_befa060d808d47f083b8cb96dd7ce969@example.com,$2b$12$7EvaUfNyDlTfdXxGX4n67.QFkDelAtjUjS5vjhs0lTThXQ0bmGdQu,Pytest User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+6.0,test_b360871214d54baf87d8248f1e168946@example.com,$2b$12$IVDDuA7Dtn/NIeTFITxoHu.A48bp31zBqoYwALg8fBs8MfguGh1ae,Pytest User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+7.0,duplicate_fc193a2b5bfe4307a75f6ae7fdd48bad@example.com,$2b$12$xJuqMRTm2RbEiy394qsuMuzx4vdTD4xZqrnuHGa3WcWNbLd3mweR2,First User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+8.0,test_885c95b85ed048308f5c9f9df43f0ffd@example.com,$2b$12$Oy4B.3fZCWP2aAbTeAswoeWUNSzf1nKoWgwI03LFsm0zjgldT8TB.,Pytest User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+9.0,duplicate_be621700507049f086bb55717f01de86@example.com,$2b$12$c4VSYGICrhW4/4m9vS.pDe.nqO.PdDnrWCA6YS78hTNahI9EuikCG,First User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+10.0,test_654b058b4202474caa29cd36dc79db69@example.com,$2b$12$UG6siFc6guiWr1HiI4TfouVnbHRVt6Yvvuugqq8EPlZSbI17B3d.O,Pytest User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+11.0,duplicate_721d882502184bba8a7c15e8f99c75a4@example.com,$2b$12$dBFabPi.TgehFe4RWaWLTu5bqt.EML3pNpsMfQ9s/9/jvya7UeCm2,First User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+12.0,test_3712b4738b41420c87a6018e9ef81d20@example.com,$2b$12$RnycM1smXx5GPVxcQ2xvx.3MU9dUkoWCAAJbVoavJ818sdv9qE7fW,Pytest User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+13.0,duplicate_5037aeef3c674024921bd134cd591275@example.com,$2b$12$cxg5lRJLtY5PZOFlJbizv.YSyDQNuD1Uz4shA9ip0a1xSXsVEJDAO,First User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+14.0,test_aa88db3c593b43d98e5db319f8ed5cbe@example.com,$2b$12$kR9hT.SDhBm/kDzu1oPIseUchbvLA79KOoRsyKHnIIGi4lB5ziUd.,Pytest User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+15.0,duplicate_c6fb65fada284f82adafe43f8994a8dc@example.com,$2b$12$tpeuBqAkmQMW1nYFACUlCujNWsP6H3PK8pgGiFaueJF5YAdceQLiG,First User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+16.0,test_bf903ade@example.com,$2b$12$YUZzNooaLM1JF/xfTHpHl.bifIEB.Z5P0ivzvp6yK3qc0dbjRAUQW,Test User,user,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+nan,nan,nan,nan,nan,nan,nan,nan,nan
+17.0,kiana.nb81@gmail.com,$2b$12$47BQj4F8i9YSsQcIql8fe.pun6DUP.m6r.28wOQ3hdBkg7dZ77bza,Kiana,user,,nan,nan,"Kelowna, BC, Canada"
