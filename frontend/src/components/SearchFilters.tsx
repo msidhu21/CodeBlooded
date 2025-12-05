@@ -29,6 +29,7 @@ export default function SearchFilters({
   isLoading = false,
 }: SearchFiltersProps) {
   const [localFilters, setLocalFilters] = useState<FilterState>(filters);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     setLocalFilters(filters);
@@ -67,7 +68,22 @@ export default function SearchFilters({
 
   return (
     <div className="card p-6 mb-6">
-      <h2 className="text-xl font-bold mb-4">Search & Filters</h2>
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="w-full flex items-center justify-between text-xl font-bold mb-4 hover:text-primary transition-colors"
+      >
+        <span>Search & Filters</span>
+        <span className="text-2xl">{isExpanded ? '−' : '+'}</span>
+      </button>
+
+      {!isExpanded && (
+        <p className="text-sm text-gray-600 mb-4">
+          Click to expand filters
+        </p>
+      )}
+
+      {isExpanded && (
+        <div>
 
       {/* Search Input */}
       <div className="mb-4">
@@ -231,6 +247,8 @@ export default function SearchFilters({
           Reset
         </button>
       </div>
+        </div>
+      )}
     </div>
   );
 }
