@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getToken } from "@/lib/api/auth";
 import styles from "./profile.module.css";
 
 export default function ProfilePage() {
