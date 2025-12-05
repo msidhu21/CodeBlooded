@@ -21,6 +21,7 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const [filters, setFilters] = useState<FilterState>({
     query: '',
@@ -38,6 +39,10 @@ export default function HomePage() {
   useEffect(() => {
     fetchCategories();
     performSearch(1); // Load all products by default
+    
+    // Check if user is logged in
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!user);
   }, []);
 
   const fetchCategories = async () => {
@@ -196,16 +201,28 @@ export default function HomePage() {
           </div>
           <div className="flex gap-3 items-center">
             <ThemeToggle />
-            <Link href="/login">
-              <button className="px-6 py-2 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors font-medium">
-                Login
-              </button>
-            </Link>
-            <Link href="/register">
-              <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                Sign Up
-              </button>
-            </Link>
+            {isLoggedIn ? (
+              <Link href="/profile">
+                <button className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" aria-label="Profile">
+                  <svg className="w-6 h-6 text-gray-800 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/login">
+                  <button className="px-6 py-2 text-blue-600 dark:text-blue-400 border-2 border-blue-600 dark:border-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors font-medium">
+                    Login
+                  </button>
+                </Link>
+                <Link href="/register">
+                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    Sign Up
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
         

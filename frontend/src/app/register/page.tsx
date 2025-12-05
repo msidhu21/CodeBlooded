@@ -22,8 +22,8 @@ export default function RegisterPage() {
       // Save session
       localStorage.setItem("user", JSON.stringify(user));
 
-      // Redirect to profile
-      window.location.href = "/profile";
+      // Redirect to home
+      window.location.href = "/";
     } catch (err: any) {
       setMessage(err.message ?? "Registration failed");
     } finally {

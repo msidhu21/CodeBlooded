@@ -1,5 +1,5 @@
 user_id,email,password_hash,name,role,picture,contact_email,contact_phone
-1,admin@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Admin User,admin,https://static.generated.photos/vue-static/face-generator/landing/wall/14.jpg,nan,nan
+1,kiana.nb81@gmail.com,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Ishaan,User,,nan,nan
 2,demo@cosc310.ca,$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYILuxuRYDm,Demo User,user,nan,nan,nan
 3,test@cosc310.ca,$2b$12$CvvneImJrECvwfZqTSNH2eBHnwD5Xf6V6TKwZb0ZgDHtu8uKP72h.,Test User,user,nan,nan,nan
 4,newuser@example.com,$2b$12$ciSwBNHqKlekI/lFgQd8F.K2HTeDMDrDsqS9is4ZFzN8VfYEocjXi,Test User,user,nan,nan,nan
@@ -14,4 +14,5 @@ user_id,email,password_hash,name,role,picture,contact_email,contact_phone
 13,duplicate_5037aeef3c674024921bd134cd591275@example.com,$2b$12$cxg5lRJLtY5PZOFlJbizv.YSyDQNuD1Uz4shA9ip0a1xSXsVEJDAO,First User,user,nan,nan,nan
 14,test_aa88db3c593b43d98e5db319f8ed5cbe@example.com,$2b$12$kR9hT.SDhBm/kDzu1oPIseUchbvLA79KOoRsyKHnIIGi4lB5ziUd.,Pytest User,user,nan,nan,nan
 15,duplicate_c6fb65fada284f82adafe43f8994a8dc@example.com,$2b$12$tpeuBqAkmQMW1nYFACUlCujNWsP6H3PK8pgGiFaueJF5YAdceQLiG,First User,user,nan,nan,nan
-16,test_bf903ade@example.com,$2b$12$YUZzNooaLM1JF/xfTHpHl.bifIEB.Z5P0ivzvp6yK3qc0dbjRAUQW,Test User,user,,,
+16,test_bf903ade@example.com,$2b$12$YUZzNooaLM1JF/xfTHpHl.bifIEB.Z5P0ivzvp6yK3qc0dbjRAUQW,Test User,user,nan,nan,nan
+17,kiana.nb81@gmail.com,$2b$12$uJz2xjaWs7oymmTKo2B23O9KneAtE6xCsGPpSWo.hOtQ3/JgQXxNC,Kiana,user,nan,nan,nan
