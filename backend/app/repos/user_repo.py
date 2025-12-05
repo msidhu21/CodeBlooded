@@ -110,4 +110,6 @@ class UserRepo:
                     self.df.at[row, field] = value
 
             self._save()
-            return self.df.iloc[row].to_dict()
+            user_dict = self.df.iloc[row].to_dict()
+            # Replace NaN values with None
+            return {k: (None if pd.isna(v) else v) for k, v in user_dict.items()}
