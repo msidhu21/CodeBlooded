@@ -16,6 +16,8 @@ export default function ItemDetailsPage() {
   const [related, setRelated] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
     const fetchItemDetails = async () => {
@@ -26,6 +28,9 @@ export default function ItemDetailsPage() {
         const response = await apiClient.getItemDetails(productId);
         setProduct(response.product);
         setRelated(response.related);
+        
+        const wishlistCheck = await apiClient.checkWishlist(productId);
+        setIsInWishlist(wishlistCheck.is_in_wishlist);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load product details');
       } finally {
@@ -37,6 +42,24 @@ export default function ItemDetailsPage() {
       fetchItemDetails();
     }
   }, [productId]);
+
+  const handleWishlistToggle = async () => {
+    if (!product) return;
+    setWishlistLoading(true);
+    try {
+      if (isInWishlist) {
+        await apiClient.removeFromWishlist(product.product_id);
+        setIsInWishlist(false);
+      } else {
+        await apiClient.addToWishlist(product.product_id);
+        setIsInWishlist(true);
+      }
+    } catch (error) {
+      console.error('Error updating wishlist:', error);
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -128,17 +151,35 @@ export default function ItemDetailsPage() {
             </div>
           )}
 
-          {product.product_link && (
-            <a
-              href={product.product_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-primary"
-              style={{ display: 'inline-block', marginTop: '20px' }}
+          <div style={{ display: 'flex', gap: '10px', marginTop: '20px', flexWrap: 'wrap' }}>
+            <button
+              onClick={handleWishlistToggle}
+              disabled={wishlistLoading}
+              style={{
+                padding: '12px 24px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                background: isInWishlist ? '#ff6b6b' : '#fff',
+                color: isInWishlist ? '#fff' : '#333',
+                cursor: wishlistLoading ? 'not-allowed' : 'pointer',
+                fontSize: '16px',
+                fontWeight: '500',
+              }}
             >
-              Open Product Link
-            </a>
-          )}
+              {wishlistLoading ? '...' : isInWishlist ? '❤️ Remove from Wishlist' : '🤍 Add to Wishlist'}
+            </button>
+            {product.product_link && (
+              <a
+                href={product.product_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{ display: 'inline-block' }}
+              >
+                Open Product Link
+              </a>
+            )}
+          </div>
         </div>
       </div>
 

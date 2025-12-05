@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from app.api import auth, items, profile, admin, export, external
+from app.api import auth, items, profile, admin, export, external, wishlist
 
 load_dotenv()
 
@@ -23,6 +23,7 @@ def create_app() -> FastAPI:
     app.include_router(admin.router)
     app.include_router(export.router)
     app.include_router(external.router)
+    app.include_router(wishlist.router)
     return app
 
 # global for dev server

@@ -1,6 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { apiClient } from '@/lib/api';
 import type { Product } from '@/types';
 
 interface ProductCardProps {
@@ -9,6 +11,39 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, showDetails = true }: ProductCardProps) {
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const checkWishlist = async () => {
+      try {
+        const response = await apiClient.checkWishlist(product.product_id);
+        setIsInWishlist(response.is_in_wishlist);
+      } catch (error) {
+        console.error('Error checking wishlist:', error);
+      }
+    };
+    checkWishlist();
+  }, [product.product_id]);
+
+  const handleWishlistToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLoading(true);
+    try {
+      if (isInWishlist) {
+        await apiClient.removeFromWishlist(product.product_id);
+        setIsInWishlist(false);
+      } else {
+        await apiClient.addToWishlist(product.product_id);
+        setIsInWishlist(true);
+      }
+    } catch (error) {
+      console.error('Error updating wishlist:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {product.img_link && (
@@ -60,15 +95,33 @@ export default function ProductCard({ product, showDetails = true }: ProductCard
           )}
         </div>
       )}
-      {showDetails && (
-        <Link
-          href={`/items/${product.product_id}`}
-          className="btn btn-primary"
-          style={{ marginTop: 'auto', textAlign: 'center', display: 'block' }}
+      <div style={{ marginTop: 'auto', display: 'flex', gap: '10px', flexDirection: 'column' }}>
+        <button
+          onClick={handleWishlistToggle}
+          disabled={loading}
+          style={{
+            padding: '8px 16px',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            background: isInWishlist ? '#ff6b6b' : '#fff',
+            color: isInWishlist ? '#fff' : '#333',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+          }}
         >
-          View Details
-        </Link>
-      )}
+          {loading ? '...' : isInWishlist ? '❤️ Remove from Wishlist' : '🤍 Add to Wishlist'}
+        </button>
+        {showDetails && (
+          <Link
+            href={`/items/${product.product_id}`}
+            className="btn btn-primary"
+            style={{ textAlign: 'center', display: 'block' }}
+          >
+            View Details
+          </Link>
+        )}
+      </div>
     </div>
   );
 }
