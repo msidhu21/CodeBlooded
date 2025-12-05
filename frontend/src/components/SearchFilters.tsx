@@ -81,11 +81,11 @@ export default function SearchFilters({
     if (isParent) {
       // If parent is clicked, toggle all its subcategories
       const parentCats = categoryTree[categoryPath] || [];
-      const allSelected = parentCats.every(cat => currentCategories.includes(cat));
+      const allSelected = parentCats.every((cat: string) => currentCategories.includes(cat));
       
       if (allSelected) {
         // Deselect all subcategories
-        const newCategories = currentCategories.filter(cat => !parentCats.includes(cat));
+        const newCategories = currentCategories.filter((cat: string) => !parentCats.includes(cat));
         setLocalFilters({ ...localFilters, categories: newCategories, category: '' });
       } else {
         // Select all subcategories
@@ -95,7 +95,7 @@ export default function SearchFilters({
     } else {
       // Toggle individual category
       if (currentCategories.includes(categoryPath)) {
-        const newCategories = currentCategories.filter(cat => cat !== categoryPath);
+        const newCategories = currentCategories.filter((cat: string) => cat !== categoryPath);
         setLocalFilters({ ...localFilters, categories: newCategories, category: '' });
       } else {
         const newCategories = [...currentCategories, categoryPath];
@@ -182,7 +182,7 @@ export default function SearchFilters({
           id="search"
           type="text"
           value={localFilters.query}
-          onChange={(e) => handleInputChange('query', e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('query', e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Search by name, description, or category..."
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
@@ -204,7 +204,7 @@ export default function SearchFilters({
           {parentCategories.length === 0 ? (
             <div className="p-4 text-gray-500 text-sm">No categories available</div>
           ) : (
-            parentCategories.map((parent) => {
+            parentCategories.map((parent: string) => {
               const subcategories = categoryTree[parent] || [];
               const isExpanded = expandedParents.has(parent);
               const allSelected = subcategories.every((cat: string) => 
@@ -258,7 +258,7 @@ export default function SearchFilters({
                   {/* Subcategories */}
                   {isExpanded && (
                     <div className="pl-8 bg-gray-50">
-                      {subcategories.map((cat) => {
+                      {subcategories.map((cat: string) => {
                         const parts = cat.split('|');
                         const displayName = parts.slice(1).join(' > ') || cat;
                         const isSelected = localFilters.categories?.includes(cat);

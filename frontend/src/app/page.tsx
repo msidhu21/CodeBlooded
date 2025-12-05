@@ -174,7 +174,7 @@ export default function HomePage() {
   };
 
   const removeCategoryFromFilter = (categoryToRemove: string) => {
-    const newCategories = filters.categories?.filter(cat => cat !== categoryToRemove) || [];
+    const newCategories = filters.categories?.filter((cat: string) => cat !== categoryToRemove) || [];
     const newFilters = { ...filters, categories: newCategories, category: '' };
     setFilters(newFilters);
     setCurrentPage(1);
